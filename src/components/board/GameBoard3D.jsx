@@ -898,7 +898,7 @@ const Atmosphere = ({ activeCircle }) => (
 
 // ─── 3D Scéna — vše dohromady ────────────────────────────────
 const Scene3D = () => {
-  const players  = useGameStore((s) => s.players);
+  const players  = useGameStore((s) => s.players) ?? [];
   const curIdx        = useGameStore((s) => s.currentPlayerIndex);
   const isMoving      = useGameStore((s) => s.isMoving);
   const movingStep    = useGameStore((s) => s.movingStep);
@@ -906,6 +906,8 @@ const Scene3D = () => {
   const showTileAction   = useGameStore((s) => s.showTileAction);
   const currentTileAction = useGameStore((s) => s.currentTileAction);
   const showWitnessing   = useGameStore((s) => s.showWitnessing);
+
+  if (!players || players.length === 0) return null;
 
   const curPlayer    = players[curIdx];
   const activeCircle = curPlayer?.circle ?? "outer";
