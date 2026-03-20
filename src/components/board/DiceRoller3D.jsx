@@ -94,7 +94,7 @@ const DiceRoller3D = () => {
   const rollDice    = useGameStore((s) => s.rollDice);
   const confirmMove = useGameStore((s) => s.confirmMove);
   const curIdx      = useGameStore((s) => s.currentPlayerIndex);
-  const players     = useGameStore((s) => s.players);
+  const players     = useGameStore((s) => s.players) ?? [];
   const gamePhase   = useGameStore((s) => s.gamePhase);
   const isModalOpen = useGameStore((s) => s.isModalOpen);
   const isMoving    = useGameStore((s) => s.isMoving);
