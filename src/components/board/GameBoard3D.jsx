@@ -142,19 +142,17 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
         />
       </mesh>
 
-      {/* Textura obrázku — Billboard vždy čelí kameře */}
+      {/* Textura obrázku přímo na vrchu hexagonu */}
       {!isEmpty && hasTexture && (
-        <Billboard follow lockX={false} lockY={false} lockZ={false}>
-          <mesh position={[0, h + 0.35, 0]}>
-            <planeGeometry args={[0.55, 0.55]} />
-            <meshBasicMaterial
-              map={tileTexture}
-              transparent
-              opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.82}
-              depthWrite={false}
-            />
-          </mesh>
-        </Billboard>
+        <mesh position={[0, h + 0.006, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.36, 32]} />
+          <meshBasicMaterial
+            map={tileTexture}
+            transparent
+            opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.88}
+            depthWrite={false}
+          />
+        </mesh>
       )}
 
       {/* Spodní lem — barevný pruh */}
