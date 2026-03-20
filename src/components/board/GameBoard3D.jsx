@@ -14,6 +14,7 @@ import { useGameStore } from "../../store/gameStore";
 import { OUTER_TILES, INNER_TILES } from "../../data/tiles";
 import { getAvatarColor } from "./AvatarSVG";
 import DiceRoller3D from "./DiceRoller3D";
+import { useDisplaySize } from "../../hooks/useDisplaySize";
 import PostProcessing from "./PostProcessing";
 
 // ─── Konstanty ────────────────────────────────────────────────
@@ -1007,9 +1008,13 @@ const Scene3D = () => {
 };
 
 // ─── Hlavní komponenta ────────────────────────────────────────
-const GameBoard3D = () => (
-  <div style={{
-    width: "100%", maxWidth: 600,
+const GameBoard3D = () => {
+  const { size } = useDisplaySize();
+  const maxWidth = Math.round(600 * (size / 100));
+
+  return (
+    <div style={{
+      width: "100%", maxWidth: maxWidth,
     margin: "0 auto",
     display: "flex", flexDirection: "column",
   }}>
@@ -1061,7 +1066,8 @@ const GameBoard3D = () => (
 
     {/* Kostka */}
     <DiceRoller3D />
-  </div>
-);
+    </div>
+  );
+};
 
 export default GameBoard3D;
