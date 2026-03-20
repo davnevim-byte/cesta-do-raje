@@ -41,15 +41,19 @@ const TILE_COLORS = {
   special:  { top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.25, height: 0.18, rim: "#1a5a8a" },
 };
 
-// Mapování typů políček na textury
+// Textury přímo jako materiál hexagonu (jen pro typy kde to dává smysl)
 const TILE_TEXTURES = {
   negative: "/cesta-do-raje/tiles/tile_negative.jpg",
-  doors:    "/cesta-do-raje/tiles/tile_doors.jpg",
-  start:    "/cesta-do-raje/tiles/tile_start.jpg",
-  entry:    "/cesta-do-raje/tiles/tile_entry.jpg",
   study:    "/cesta-do-raje/tiles/tile_study.jpg",
   prayer:   "/cesta-do-raje/tiles/tile_prayer.jpg",
-  special:  "/cesta-do-raje/tiles/tile_special.jpg",
+};
+
+// Emoji ikony pro zbývající typy
+const TILE_EMOJI = {
+  doors:   "🚪",
+  start:   "▶",
+  entry:   "🤝",
+  special: "⭐",
 };
 
 // Čitelnější ikony — emoji jako text na billboardu
@@ -79,10 +83,11 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
   const col      = TILE_COLORS[tile.type] ?? TILE_COLORS.empty;
   const isEmpty  = tile.type === "empty";
   const h        = col.height;
-  const tileType = tile.type;
+  const tileType   = tile.type;
   const hasTexture = tileType in TILE_TEXTURES;
-  // Načti texturu vždy - pro empty použij doors jako fallback (ale nezobrazíme ji)
-  const tileTexture = useTexture(TILE_TEXTURES[tileType] ?? TILE_TEXTURES.doors);
+  const hasEmoji   = tileType in TILE_EMOJI;
+  // useTexture musí být vždy volán - fallback na negative pro typy bez textury
+  const tileTexture = useTexture(TILE_TEXTURES[tileType] ?? TILE_TEXTURES.negative);
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -126,38 +131,24 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
         />
       )}
 
-      {/* Hlavní tělo — hexagon */}
+      {/* Hlavní tělo — hexagon s texturou nebo barvou */}
       <mesh position={[0, h / 2, 0]}>
         <cylinderGeometry args={[0.37, 0.37, h, TILE_SEGMENTS]} />
         <meshStandardMaterial
           color={col.top}
+          map={hasTexture ? tileTexture : null}
           emissive={col.emissive}
           emissiveIntensity={
             isMovingHere ? col.emissiveInt * 4
             : isActive   ? col.emissiveInt * 2
             :              col.emissiveInt
           }
-          roughness={0.65}
-          metalness={0.12}
+          roughness={0.75}
+          metalness={0.08}
         />
       </mesh>
 
-      {/* Textura obrázku přímo na vrchu hexagonu */}
-      {!isEmpty && hasTexture && (
-        <mesh position={[0, h + 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.36, 32]} />
-          <meshBasicMaterial
-            map={tileTexture}
-            transparent
-            opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.88}
-            depthWrite={false}
-            depthTest={false}
-            polygonOffset={true}
-            polygonOffsetFactor={-1}
-            polygonOffsetUnits={-1}
-          />
-        </mesh>
-      )}
+
 
       {/* Spodní lem — barevný pruh */}
       <mesh ref={rimRef} position={[0, 0.03, 0]}>
@@ -183,6 +174,20 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
             metalness={0.5}
           />
         </mesh>
+      )}
+
+      {/* Emoji ikona pro typy s emoji */}
+      {!isEmpty && hasEmoji && (
+        <Billboard follow lockX={false} lockY={true} lockZ={false}>
+          <Text
+            position={[0, h + 0.22, 0]}
+            fontSize={0.22}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {TILE_EMOJI[tileType]}
+          </Text>
+        </Billboard>
       )}
 
       {/* Název políčka — čitelný billboard */}
