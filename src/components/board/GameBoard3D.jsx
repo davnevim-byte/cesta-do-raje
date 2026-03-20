@@ -1014,58 +1014,60 @@ const GameBoard3D = () => {
 
   return (
     <div style={{
-      width: "100%", maxWidth: maxWidth,
-    margin: "0 auto",
-    display: "flex", flexDirection: "column",
-  }}>
-    {/* 3D Canvas */}
-    <div style={{
-      position:      "relative",
-      width:         "100%",
-      paddingBottom: "90%",
-      borderRadius:  16,
-      overflow:      "hidden",
-      background:    "transparent",
+      width: "100%",
+      maxWidth: maxWidth,
+      margin: "0 auto",
+      display: "flex",
+      flexDirection: "column",
     }}>
-      <div style={{ position: "absolute", inset: 0 }}>
-        <Canvas
-          camera={{ position: [0, 10, 9], fov: 50 }}
-          gl={{
-            antialias:        true,
-            alpha:            true,
-            powerPreference:  "high-performance",
-            outputColorSpace: "srgb",
-          }}
-          dpr={[1, 2]}
-        >
-          <Scene3D />
-        </Canvas>
-      </div>
-    </div>
-
-    {/* Legenda */}
-    <div style={{
-      display: "flex", flexWrap: "wrap",
-      gap: "5px 12px", justifyContent: "center",
-      padding: "8px 0 4px",
-    }}>
-      {[
-        { c: "#c0392b", l: "Negativní" },
-        { c: "#d4ac0d", l: "Dveře" },
-        { c: "#27ae60", l: "Studium/Modlitba" },
-        { c: "#2980b9", l: "Speciální" },
-      ].map((item) => (
-        <div key={item.l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <div style={{ width: 7, height: 7, borderRadius: "50%", background: item.c }} />
-          <span style={{ fontSize: 10, color: "var(--color-text-secondary)" }}>
-            {item.l}
-          </span>
+      {/* 3D Canvas */}
+      <div style={{
+        position:      "relative",
+        width:         "100%",
+        paddingBottom: "90%",
+        borderRadius:  16,
+        overflow:      "hidden",
+        background:    "transparent",
+      }}>
+        <div style={{ position: "absolute", inset: 0 }}>
+          <Canvas
+            camera={{ position: [0, 10, 9], fov: 50 }}
+            gl={{
+              antialias:        true,
+              alpha:            true,
+              powerPreference:  "high-performance",
+              outputColorSpace: "srgb",
+            }}
+            dpr={[1, 2]}
+          >
+            <Scene3D />
+          </Canvas>
         </div>
-      ))}
-    </div>
+      </div>
 
-    {/* Kostka */}
-    <DiceRoller3D />
+      {/* Legenda */}
+      <div style={{
+        display: "flex", flexWrap: "wrap",
+        gap: "5px 12px", justifyContent: "center",
+        padding: "8px 0 4px",
+      }}>
+        {[
+          { c: "#c0392b", l: "Negativní" },
+          { c: "#d4ac0d", l: "Dveře" },
+          { c: "#27ae60", l: "Studium/Modlitba" },
+          { c: "#2980b9", l: "Speciální" },
+        ].map((item) => (
+          <div key={item.l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: item.c }} />
+            <span style={{ fontSize: 10, color: "var(--color-text-secondary)" }}>
+              {item.l}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Kostka */}
+      <DiceRoller3D />
     </div>
   );
 };
