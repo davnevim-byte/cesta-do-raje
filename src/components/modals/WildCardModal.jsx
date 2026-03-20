@@ -51,6 +51,8 @@ const WildCardModal = () => {
           transition={{ duration: 0.38, ease: [0.34, 1.56, 0.64, 1] }}
           style={{
             width: "100%", maxWidth: 420,
+            maxHeight: "90dvh",
+            display: "flex", flexDirection: "column",
             background: "#0d0d10",
             border: `2px solid ${typeInfo.color}`,
             borderRadius: 18, overflow: "hidden",
@@ -62,6 +64,7 @@ const WildCardModal = () => {
             padding: "16px 20px",
             borderBottom: `1px solid ${typeInfo.color}33`,
             display: "flex", alignItems: "center", gap: 12,
+            flexShrink: 0,
           }}>
             <motion.span
               style={{ fontSize: 32 }}
@@ -95,7 +98,7 @@ const WildCardModal = () => {
             </div>
           </div>
 
-          <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 14, overflowY: "auto", WebkitOverflowScrolling: "touch", flex: 1 }}>
 
             {/* Popis */}
             <p style={{
