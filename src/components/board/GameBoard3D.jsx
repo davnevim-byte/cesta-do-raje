@@ -6,7 +6,7 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  Text, Billboard, Sparkles, Stars,
+  Text, Billboard, Sparkles, Stars, useTexture,
 } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -41,6 +41,17 @@ const TILE_COLORS = {
   special:  { top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.25, height: 0.18, rim: "#1a5a8a" },
 };
 
+// Mapování typů políček na textury
+const TILE_TEXTURES = {
+  negative: "/cesta-do-raje/tiles/tile_negative.jpg",
+  doors:    "/cesta-do-raje/tiles/tile_doors.jpg",
+  start:    "/cesta-do-raje/tiles/tile_start.jpg",
+  entry:    "/cesta-do-raje/tiles/tile_entry.jpg",
+  study:    "/cesta-do-raje/tiles/tile_study.jpg",
+  prayer:   "/cesta-do-raje/tiles/tile_prayer.jpg",
+  special:  "/cesta-do-raje/tiles/tile_special.jpg",
+};
+
 // Čitelnější ikony — emoji jako text na billboardu
 const TILE_LABELS = {
   negative: "!", doors: "⛪", start: "▶", entry: "⛪",
@@ -68,6 +79,11 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
   const col      = TILE_COLORS[tile.type] ?? TILE_COLORS.empty;
   const isEmpty  = tile.type === "empty";
   const h        = col.height;
+  const texturePath = TILE_TEXTURES[tile.type] ?? null;
+  // useTexture musí být volán vždy (React hook pravidla) - použij fallback
+  const texture = useTexture(
+    texturePath || "/cesta-do-raje/tiles/tile_special.jpg"
+  );
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -126,6 +142,18 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
           metalness={0.12}
         />
       </mesh>
+
+      {/* Textura obrázku na vrchu políčka */}
+      {!isEmpty && texturePath && (
+        <mesh position={[0, h + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.33, 32]} />
+          <meshBasicMaterial
+            map={texture}
+            transparent
+            opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.85}
+          />
+        </mesh>
+      )}
 
       {/* Spodní lem — barevný pruh */}
       <mesh ref={rimRef} position={[0, 0.03, 0]}>
