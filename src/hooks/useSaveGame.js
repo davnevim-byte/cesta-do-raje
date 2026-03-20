@@ -14,7 +14,7 @@ const SAVE_KEY = "cesta-do-raje-game"; // musí odpovídat persist name v store
 
 export const useSaveGame = () => {
   const gamePhase = useGameStore((s) => s.gamePhase);
-  const players   = useGameStore((s) => s.players);
+  const players   = useGameStore((s) => s.players) ?? [];
   const [savedAt, setSavedAt] = useState(null);
   const [hasSavedGame, setHasSavedGame] = useState(false);
 
