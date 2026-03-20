@@ -146,11 +146,11 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
       {/* Textura obrázku na vrchu políčka */}
       {!isEmpty && texturePath && (
         <mesh position={[0, h + 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.65, 0.65]} />
+          <circleGeometry args={[0.34, 32]} />
           <meshBasicMaterial
             map={texture}
             transparent
-            opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.85}
+            opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.82}
             depthWrite={false}
           />
         </mesh>
@@ -207,20 +207,26 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
 // ─── Kruhová deska pod políčky ────────────────────────────────
 const BoardBase = () => (
   <group>
-    {/* Vnější disk */}
+    {/* Vnější disk — tmavá zemitá půda */}
     <mesh position={[0, -0.12, 0]}>
       <cylinderGeometry args={[OUTER_R + 0.6, OUTER_R + 0.6, 0.12, 64]} />
-      <meshStandardMaterial color="#080810" roughness={0.9} metalness={0.05} />
+      <meshStandardMaterial
+        color="#1a1208"
+        emissive="#2a1e0a"
+        emissiveIntensity={0.05}
+        roughness={0.95}
+        metalness={0.0}
+      />
     </mesh>
 
-    {/* Vnitřní disk — sbor */}
+    {/* Vnitřní disk — sbor — tmavá zelenavá tráva */}
     <mesh position={[0, -0.06, 0]}>
       <cylinderGeometry args={[INNER_R + 0.5, INNER_R + 0.5, 0.1, 64]} />
       <meshStandardMaterial
-        color="#051008"
+        color="#0a1a0c"
         emissive="#1D9E75"
-        emissiveIntensity={0.04}
-        roughness={0.8}
+        emissiveIntensity={0.06}
+        roughness={0.9}
       />
     </mesh>
 
@@ -228,9 +234,9 @@ const BoardBase = () => (
     <mesh position={[0, -0.03, 0]}>
       <cylinderGeometry args={[1.3, 1.3, 0.08, 32]} />
       <meshStandardMaterial
-        color="#041a0c"
+        color="#061a0a"
         emissive="#1D9E75"
-        emissiveIntensity={0.3}
+        emissiveIntensity={0.35}
         roughness={0.6}
       />
     </mesh>
@@ -242,6 +248,16 @@ const BoardBase = () => (
         color="#d4ac0d"
         emissive="#d4ac0d"
         emissiveIntensity={0.4}
+      />
+    </mesh>
+
+    {/* Jemný prstenec na okraji vnější desky */}
+    <mesh position={[0, -0.06, 0]}>
+      <torusGeometry args={[OUTER_R + 0.55, 0.03, 8, 64]} />
+      <meshStandardMaterial
+        color="#5a3e10"
+        emissive="#3a2808"
+        emissiveIntensity={0.2}
       />
     </mesh>
   </group>
