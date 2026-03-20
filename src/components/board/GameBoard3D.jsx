@@ -907,8 +907,12 @@ const Scene3D = () => {
   const currentTileAction = useGameStore((s) => s.currentTileAction);
   const showWitnessing   = useGameStore((s) => s.showWitnessing);
 
+  // Debug - zkontroluj players
+  console.log("[Scene3D] players:", players?.length, "curIdx:", curIdx);
+
   // Počkej na načtení hráčů ze store
   if (!players || players.length === 0) {
+    console.log("[Scene3D] No players - returning empty scene");
     return (
       <>
         <ambientLight intensity={0.3} />
