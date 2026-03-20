@@ -138,6 +138,8 @@ export const TileModal = () => {
           transition={{ duration: 0.35, ease: "easeOut" }}
           style={{
             width: "100%", maxWidth: 460,
+            maxHeight: "90dvh",
+            display: "flex", flexDirection: "column",
             background: cfg.bg,
             border: `1.5px solid ${cfg.accent}`,
             borderRadius: 16, overflow: "hidden",
@@ -146,7 +148,7 @@ export const TileModal = () => {
           {/* Accent linka nahoře */}
           <div style={{ height: 3, background: cfg.accent }} />
 
-          <div style={{ padding: "20px" }}>
+          <div style={{ padding: "20px", overflowY: "auto", WebkitOverflowScrolling: "touch", flex: 1 }}>
             {/* Ilustrace políčka */}
             {(() => {
               const IllComp = getTileIllustration(tile.name, tile.type);
