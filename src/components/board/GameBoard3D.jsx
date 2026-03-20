@@ -151,6 +151,10 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
             transparent
             opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.88}
             depthWrite={false}
+            depthTest={false}
+            polygonOffset={true}
+            polygonOffsetFactor={-1}
+            polygonOffsetUnits={-1}
           />
         </mesh>
       )}
