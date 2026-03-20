@@ -801,6 +801,12 @@ export const useGameStore = create(
     // ─────────────────────────────
     {
       name:    "cesta-do-raje-game",
+      merge: (persisted, current) => ({
+        ...current,
+        ...persisted,
+        players: Array.isArray(persisted?.players) ? persisted.players : [],
+        turnLog: Array.isArray(persisted?.turnLog) ? persisted.turnLog : [],
+      }),
       partialize: (state) => ({
         // Uložíme jen to co chceme zachovat při obnovení stránky
         hasPlayedBefore: state.hasPlayedBefore,
@@ -821,8 +827,8 @@ export const useGameStore = create(
 //  SELEKTORY — pro přehlednost v komponentách
 // ─────────────────────────────────────────────
 
-export const selectCurrentPlayer   = (s) => s.players[s.currentPlayerIndex];
-export const selectPlayers         = (s) => s.players;
+export const selectCurrentPlayer   = (s) => (s.players ?? [])[s.currentPlayerIndex];
+export const selectPlayers         = (s) => s.players ?? [];
 export const selectGamePhase       = (s) => s.gamePhase;
 export const selectDifficulty      = (s) => s.difficulty;
 export const selectTimeRemaining   = (s) => s.timeRemaining;
