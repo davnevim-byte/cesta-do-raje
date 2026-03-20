@@ -65,6 +65,9 @@ const QuestionModal = () => {
           style={{
             width:        "100%",
             maxWidth:     480,
+            maxHeight:    "90dvh",
+            display:      "flex",
+            flexDirection: "column",
             background:   dc.bg,
             border:       `1.5px solid ${dc.border}`,
             borderRadius: 16,
@@ -100,7 +103,7 @@ const QuestionModal = () => {
           </div>
 
           {/* Otázka */}
-          <div style={{ padding: "20px 20px 0" }}>
+          <div style={{ padding: "20px 20px 0", overflowY: "auto", WebkitOverflowScrolling: "touch", flex: 1 }}>
             <p style={{
               fontSize: 17, fontWeight: 600,
               color: "#e8e8e8", lineHeight: 1.5,
