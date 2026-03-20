@@ -14,7 +14,7 @@ const PLAYER_COLORS = [
 ];
 
 export const Scoreboard = ({ compact = false }) => {
-  const players            = useGameStore((s) => s.players);
+  const players            = useGameStore((s) => s.players) ?? [];
   const currentPlayerIndex = useGameStore((s) => s.currentPlayerIndex);
 
   const sorted = [...players]
@@ -123,7 +123,7 @@ export const Scoreboard = ({ compact = false }) => {
 // ============================================================
 
 export const FruitTracker = ({ playerIndex }) => {
-  const players = useGameStore((s) => s.players);
+  const players = useGameStore((s) => s.players) ?? [];
   const player  = players[playerIndex ?? 0];
 
   if (!player?.fruitScore) return null;
