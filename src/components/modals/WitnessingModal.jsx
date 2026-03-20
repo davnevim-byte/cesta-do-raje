@@ -88,9 +88,12 @@ const WitnessingModal = () => {
           transition={{ duration: 0.4, ease: "easeOut" }}
           style={{
             width: "100%", maxWidth: 500,
+            maxHeight: "90dvh",
             background: "#0d1a0f",
             border: "1.5px solid #EF9F27",
-            borderRadius: 16, overflow: "hidden",
+            borderRadius: 16,
+            overflow: "hidden",
+            display: "flex", flexDirection: "column",
           }}
         >
           {/* Header — dramatický */}
@@ -100,6 +103,7 @@ const WitnessingModal = () => {
             borderBottom: "1px solid rgba(239,159,39,0.2)",
             display: "flex", alignItems: "center",
             justifyContent: "space-between",
+            flexShrink: 0,
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <motion.span
@@ -123,7 +127,7 @@ const WitnessingModal = () => {
             )}
           </div>
 
-          <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 14, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
 
             {/* Název + místo */}
             <div>
