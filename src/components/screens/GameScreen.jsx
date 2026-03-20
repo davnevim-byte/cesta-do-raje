@@ -20,7 +20,7 @@ import { useSound } from "../../hooks/useSound";
 export const GameScreen = () => {
   const endGame    = useGameStore((s) => s.endGame);
   const difficulty = useGameStore((s) => s.difficulty);
-  const players    = useGameStore((s) => s.players);
+  const players    = useGameStore((s) => s.players) ?? [];
   const curIdx     = useGameStore((s) => s.currentPlayerIndex);
 
   const { switchToZone, init, stop } = useMusic();
