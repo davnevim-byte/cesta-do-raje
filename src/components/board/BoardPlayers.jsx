@@ -148,7 +148,7 @@ const PlayerChip = ({ player, index }) => {
 
 // ── Hlavní komponenta ─────────────────────────────────────────
 const BoardPlayers = () => {
-  const players = useGameStore((s) => s.players);
+  const players = useGameStore((s) => s.players) ?? [];
 
   if (!players.length) return null;
 
