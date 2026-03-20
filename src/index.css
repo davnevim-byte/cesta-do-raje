@@ -1,0 +1,93 @@
+/* ============================================================
+   Globální styly — Cesta do Ráje
+   Opraveno: iOS Safari 100dvh, safe-area, touch-action
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  /* Zabraňuje double-tap zoom na iOS */
+  touch-action: manipulation;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #060810;
+  color: #e8e8e8;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* iOS Safari: skutečná výška viewportu bez adresního řádku */
+  min-height: 100dvh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #333; }
+
+/* Input focus */
+input:focus { outline: none; }
+/* iOS: zabraňuje zoom při focusu na input */
+input, select, textarea { font-size: 16px; }
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Sidebar — skrýt na malých obrazovkách */
+@media (max-width: 640px) {
+  .sidebar { display: none !important; }
+}
+
+/* PWA safe area — záseky na iPhoneX+ a Androidu */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Výška obrazovky — dvh je správná hodnota pro moderní mobily */
+.full-height {
+  min-height: 100dvh;
+  min-height: 100vh; /* fallback */
+}
+
+/* Žádný user-select na herní ploše */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Touch targets — minimálně 44px pro iOS HIG */
+button {
+  min-height: 44px;
+  cursor: pointer;
+}
+
+/* Sidebar toggle — viditelný jen na mobilu */
+@media (min-width: 641px) {
+  .sidebar-toggle { display: none !important; }
+}
