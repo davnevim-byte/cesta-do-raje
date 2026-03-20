@@ -15,6 +15,7 @@ import WitnessingModal from "../modals/WitnessingModal";
 import { TileModal } from "../modals/TileModal";
 import WildCardModal from "../modals/WildCardModal";
 import { useMusic } from "../../hooks/useMusic";
+import { DisplaySizeControl } from "../ui/DisplaySizeControl";
 import { useSound } from "../../hooks/useSound";
 
 export const GameScreen = () => {
@@ -152,6 +153,9 @@ export const GameScreen = () => {
       <WitnessingModal />
       <TileModal />
       <WildCardModal />
+
+      {/* NASTAVENÍ VELIKOSTI */}
+      <DisplaySizeControl />
 
       {/* PŘECHOD DO SBORU */}
       <AnimatePresence>
