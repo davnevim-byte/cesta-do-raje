@@ -131,22 +131,35 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
         />
       )}
 
-      {/* Hlavní tělo — hexagon s texturou nebo barvou */}
+      {/* Hlavní tělo — hexagon */}
       <mesh position={[0, h / 2, 0]}>
         <cylinderGeometry args={[0.37, 0.37, h, TILE_SEGMENTS]} />
         <meshStandardMaterial
           color={col.top}
-          map={hasTexture ? tileTexture : null}
           emissive={col.emissive}
           emissiveIntensity={
             isMovingHere ? col.emissiveInt * 4
             : isActive   ? col.emissiveInt * 2
             :              col.emissiveInt
           }
-          roughness={0.75}
-          metalness={0.08}
+          roughness={0.65}
+          metalness={0.12}
         />
       </mesh>
+
+      {/* Textura přímo na vrchu jako plochý disk */}
+      {!isEmpty && hasTexture && (
+        <mesh position={[0, h + 0.008, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.35, 6]} />
+          <meshStandardMaterial
+            map={tileTexture}
+            emissive={col.emissive}
+            emissiveIntensity={isMovingHere ? 0.8 : isActive ? 0.4 : 0.15}
+            roughness={0.5}
+            metalness={0.1}
+          />
+        </mesh>
+      )}
 
 
 
@@ -180,8 +193,8 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
       {!isEmpty && hasEmoji && (
         <Billboard follow lockX={false} lockY={true} lockZ={false}>
           <Text
-            position={[0, h + 0.22, 0]}
-            fontSize={0.22}
+            position={[0, h + 0.28, 0]}
+            fontSize={0.30}
             anchorX="center"
             anchorY="middle"
           >
