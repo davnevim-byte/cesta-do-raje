@@ -649,7 +649,7 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         color={playerColor}
         intensity={1.2}
         distance={6}
-        decay={2}={false}
+        decay={2}
       />
     </>
   );
