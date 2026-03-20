@@ -3,7 +3,7 @@
 //  Pohled z 45° · 3D políčka · filmová kamera · atmosféra
 // ============================================================
 
-import { useRef, useState, useCallback, useMemo, useEffect } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Text, Billboard, Sparkles, Stars, useTexture,
@@ -61,25 +61,6 @@ const TILE_LABELS = {
 // Název políčka pro tooltip — z dat tiles.js je to tile.name
 const TILE_SEGMENTS = 6; // hexagon
 
-// ─── Přednačtení textur ──────────────────────────────────────
-const TileTextureLoader = ({ onLoad }) => {
-  const textures = useTexture({
-    negative: "/cesta-do-raje/tiles/tile_negative.jpg",
-    doors:    "/cesta-do-raje/tiles/tile_doors.jpg",
-    start:    "/cesta-do-raje/tiles/tile_start.jpg",
-    entry:    "/cesta-do-raje/tiles/tile_entry.jpg",
-    study:    "/cesta-do-raje/tiles/tile_study.jpg",
-    prayer:   "/cesta-do-raje/tiles/tile_prayer.jpg",
-    special:  "/cesta-do-raje/tiles/tile_special.jpg",
-  });
-  
-  useEffect(() => {
-    onLoad(textures);
-  }, []);
-  
-  return null;
-};
-
 // ─── Pozice políček ───────────────────────────────────────────
 const getTilePos3D = (i, total, radius) => {
   const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
@@ -91,14 +72,17 @@ const getTilePos3D = (i, total, radius) => {
 };
 
 // ─── Jedno políčko — hexagonální dlaždice ────────────────────
-const Tile3D = ({ tile, position, isActive, isMovingHere, textures }) => {
+const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
   const groupRef = useRef();
   const rimRef   = useRef();
   const lightRef = useRef();
   const col      = TILE_COLORS[tile.type] ?? TILE_COLORS.empty;
   const isEmpty  = tile.type === "empty";
   const h        = col.height;
-  const texturePath = TILE_TEXTURES[tile.type] ?? null;
+  const tileType = tile.type;
+  const hasTexture = tileType in TILE_TEXTURES;
+  // Načti texturu vždy - pro empty použij doors jako fallback (ale nezobrazíme ji)
+  const tileTexture = useTexture(TILE_TEXTURES[tileType] ?? TILE_TEXTURES.doors);
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -158,17 +142,19 @@ const Tile3D = ({ tile, position, isActive, isMovingHere, textures }) => {
         />
       </mesh>
 
-      {/* Textura obrázku na vrchu políčka */}
-      {!isEmpty && texturePath && textures?.[tile.type] && (
-        <mesh position={[0, h + 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.34, 32]} />
-          <meshBasicMaterial
-            map={textures[tile.type]}
-            transparent
-            opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.82}
-            depthWrite={false}
-          />
-        </mesh>
+      {/* Textura obrázku — Billboard vždy čelí kameře */}
+      {!isEmpty && hasTexture && (
+        <Billboard follow lockX={false} lockY={false} lockZ={false}>
+          <mesh position={[0, h + 0.35, 0]}>
+            <planeGeometry args={[0.55, 0.55]} />
+            <meshBasicMaterial
+              map={tileTexture}
+              transparent
+              opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.82}
+              depthWrite={false}
+            />
+          </mesh>
+        </Billboard>
       )}
 
       {/* Spodní lem — barevný pruh */}
@@ -954,7 +940,6 @@ const Atmosphere = ({ activeCircle }) => (
 
 // ─── 3D Scéna — vše dohromady ────────────────────────────────
 const Scene3D = () => {
-  const [tileTextures, setTileTextures] = useState(null);
   const players  = useGameStore((s) => s.players) ?? [];
   const curIdx        = useGameStore((s) => s.currentPlayerIndex);
   const isMoving      = useGameStore((s) => s.isMoving);
@@ -995,7 +980,6 @@ const Scene3D = () => {
   return (
     <>
       <SceneBackground />
-      <TileTextureLoader onLoad={setTileTextures} />
       <CameraController players={players} curIdx={curIdx} isMoving={isMoving} movingStep={movingStep} movingTotal={movingTotal} />
       <SceneLighting activeCircle={activeCircle} players={players} curIdx={curIdx} />
       <Atmosphere activeCircle={activeCircle} />
@@ -1016,7 +1000,6 @@ const Scene3D = () => {
             position={pos}
             isActive={anyHere}
             isMovingHere={curHere && isMoving}
-            textures={tileTextures}
           />
         );
       })}
@@ -1032,7 +1015,6 @@ const Scene3D = () => {
             position={pos}
             isActive={anyHere}
             isMovingHere={curHere && isMoving}
-            textures={tileTextures}
           />
         );
       })}
@@ -1096,7 +1078,9 @@ const GameBoard3D = () => {
             }}
             dpr={[1, 2]}
           >
-            <Scene3D />
+            <Suspense fallback={null}>
+              <Scene3D />
+            </Suspense>
           </Canvas>
         </div>
       </div>
