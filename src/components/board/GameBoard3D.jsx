@@ -907,7 +907,15 @@ const Scene3D = () => {
   const currentTileAction = useGameStore((s) => s.currentTileAction);
   const showWitnessing   = useGameStore((s) => s.showWitnessing);
 
-  if (!players || players.length === 0) return null;
+  // Počkej na načtení hráčů ze store
+  if (!players || players.length === 0) {
+    return (
+      <>
+        <ambientLight intensity={0.3} />
+      </>
+    );
+  }
+
 
   const curPlayer    = players[curIdx];
   const activeCircle = curPlayer?.circle ?? "outer";
