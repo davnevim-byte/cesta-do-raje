@@ -61,6 +61,25 @@ const TILE_LABELS = {
 // Název políčka pro tooltip — z dat tiles.js je to tile.name
 const TILE_SEGMENTS = 6; // hexagon
 
+// ─── Přednačtení textur ──────────────────────────────────────
+const TileTextureLoader = ({ onLoad }) => {
+  const textures = useTexture({
+    negative: "/cesta-do-raje/tiles/tile_negative.jpg",
+    doors:    "/cesta-do-raje/tiles/tile_doors.jpg",
+    start:    "/cesta-do-raje/tiles/tile_start.jpg",
+    entry:    "/cesta-do-raje/tiles/tile_entry.jpg",
+    study:    "/cesta-do-raje/tiles/tile_study.jpg",
+    prayer:   "/cesta-do-raje/tiles/tile_prayer.jpg",
+    special:  "/cesta-do-raje/tiles/tile_special.jpg",
+  });
+  
+  useEffect(() => {
+    onLoad(textures);
+  }, []);
+  
+  return null;
+};
+
 // ─── Pozice políček ───────────────────────────────────────────
 const getTilePos3D = (i, total, radius) => {
   const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
@@ -72,7 +91,7 @@ const getTilePos3D = (i, total, radius) => {
 };
 
 // ─── Jedno políčko — hexagonální dlaždice ────────────────────
-const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
+const Tile3D = ({ tile, position, isActive, isMovingHere, textures }) => {
   const groupRef = useRef();
   const rimRef   = useRef();
   const lightRef = useRef();
@@ -80,10 +99,6 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
   const isEmpty  = tile.type === "empty";
   const h        = col.height;
   const texturePath = TILE_TEXTURES[tile.type] ?? null;
-  // useTexture musí být volán vždy (React hook pravidla) - použij fallback
-  const texture = useTexture(
-    texturePath || "/cesta-do-raje/tiles/tile_special.jpg"
-  );
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -144,11 +159,11 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
       </mesh>
 
       {/* Textura obrázku na vrchu políčka */}
-      {!isEmpty && texturePath && (
+      {!isEmpty && texturePath && textures?.[tile.type] && (
         <mesh position={[0, h + 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[0.34, 32]} />
           <meshBasicMaterial
-            map={texture}
+            map={textures[tile.type]}
             transparent
             opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.82}
             depthWrite={false}
@@ -251,15 +266,7 @@ const BoardBase = () => (
       />
     </mesh>
 
-    {/* Jemný prstenec na okraji vnější desky */}
-    <mesh position={[0, -0.06, 0]}>
-      <torusGeometry args={[OUTER_R + 0.55, 0.03, 8, 64]} />
-      <meshStandardMaterial
-        color="#5a3e10"
-        emissive="#3a2808"
-        emissiveIntensity={0.2}
-      />
-    </mesh>
+
   </group>
 );
 
@@ -947,6 +954,7 @@ const Atmosphere = ({ activeCircle }) => (
 
 // ─── 3D Scéna — vše dohromady ────────────────────────────────
 const Scene3D = () => {
+  const [tileTextures, setTileTextures] = useState(null);
   const players  = useGameStore((s) => s.players) ?? [];
   const curIdx        = useGameStore((s) => s.currentPlayerIndex);
   const isMoving      = useGameStore((s) => s.isMoving);
@@ -987,6 +995,7 @@ const Scene3D = () => {
   return (
     <>
       <SceneBackground />
+      <TileTextureLoader onLoad={setTileTextures} />
       <CameraController players={players} curIdx={curIdx} isMoving={isMoving} movingStep={movingStep} movingTotal={movingTotal} />
       <SceneLighting activeCircle={activeCircle} players={players} curIdx={curIdx} />
       <Atmosphere activeCircle={activeCircle} />
@@ -1007,6 +1016,7 @@ const Scene3D = () => {
             position={pos}
             isActive={anyHere}
             isMovingHere={curHere && isMoving}
+            textures={tileTextures}
           />
         );
       })}
@@ -1022,6 +1032,7 @@ const Scene3D = () => {
             position={pos}
             isActive={anyHere}
             isMovingHere={curHere && isMoving}
+            textures={tileTextures}
           />
         );
       })}
