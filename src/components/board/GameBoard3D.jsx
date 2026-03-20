@@ -824,6 +824,21 @@ const DynamicFog = ({ activeCircle }) => {
   return null;
 };
 
+// ─── Pozadí scény — textura ──────────────────────────────────
+const SceneBackground = () => {
+  const { scene } = useThree();
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load('/cesta-do-raje/background.jpg', (texture) => {
+      scene.background = texture;
+    });
+    return () => { scene.background = null; };
+  }, [scene]);
+
+  return null;
+};
+
 // ─── Hlavní Atmosphere komponenta ────────────────────────────
 const Atmosphere = ({ activeCircle }) => (
   <>
@@ -925,6 +940,7 @@ const Scene3D = () => {
 
   return (
     <>
+      <SceneBackground />
       <CameraController players={players} curIdx={curIdx} isMoving={isMoving} movingStep={movingStep} movingTotal={movingTotal} />
       <SceneLighting activeCircle={activeCircle} players={players} curIdx={curIdx} />
       <Atmosphere activeCircle={activeCircle} />
@@ -1004,14 +1020,14 @@ const GameBoard3D = () => (
       paddingBottom: "90%",
       borderRadius:  16,
       overflow:      "hidden",
-      background:    "#03030a",
+      background:    "transparent",
     }}>
       <div style={{ position: "absolute", inset: 0 }}>
         <Canvas
           camera={{ position: [0, 10, 9], fov: 50 }}
           gl={{
             antialias:        true,
-            alpha:            false,
+            alpha:            true,
             powerPreference:  "high-performance",
             outputColorSpace: "srgb",
           }}
