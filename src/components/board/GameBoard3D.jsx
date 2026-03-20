@@ -144,7 +144,7 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
 
       {/* Textura obrázku přímo na vrchu hexagonu */}
       {!isEmpty && hasTexture && (
-        <mesh position={[0, h + 0.006, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh position={[0, h + 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[0.36, 32]} />
           <meshBasicMaterial
             map={tileTexture}
