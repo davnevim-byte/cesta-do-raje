@@ -111,7 +111,7 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
       )}
 
       {/* Hlavní tělo — hexagon */}
-      <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
+      <mesh position={[0, h / 2, 0]}>
         <cylinderGeometry args={[0.37, 0.37, h, TILE_SEGMENTS]} />
         <meshStandardMaterial
           color={col.top}
@@ -178,13 +178,13 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
 const BoardBase = () => (
   <group>
     {/* Vnější disk */}
-    <mesh receiveShadow position={[0, -0.12, 0]}>
+    <mesh position={[0, -0.12, 0]}>
       <cylinderGeometry args={[OUTER_R + 0.6, OUTER_R + 0.6, 0.12, 64]} />
       <meshStandardMaterial color="#080810" roughness={0.9} metalness={0.05} />
     </mesh>
 
     {/* Vnitřní disk — sbor */}
-    <mesh receiveShadow position={[0, -0.06, 0]}>
+    <mesh position={[0, -0.06, 0]}>
       <cylinderGeometry args={[INNER_R + 0.5, INNER_R + 0.5, 0.1, 64]} />
       <meshStandardMaterial
         color="#051008"
@@ -195,7 +195,7 @@ const BoardBase = () => (
     </mesh>
 
     {/* Ráj — střed */}
-    <mesh receiveShadow position={[0, -0.03, 0]}>
+    <mesh position={[0, -0.03, 0]}>
       <cylinderGeometry args={[1.3, 1.3, 0.08, 32]} />
       <meshStandardMaterial
         color="#041a0c"
@@ -234,13 +234,13 @@ const ParadiseCenter = () => {
       {/* Rotující skupina — strom */}
       <group ref={groupRef}>
         {/* Kmen */}
-        <mesh position={[0, 0.6, 0]} castShadow>
+        <mesh position={[0, 0.6, 0]}>
           <cylinderGeometry args={[0.06, 0.1, 0.8, 8]} />
           <meshStandardMaterial color="#5a3010" roughness={0.9} />
         </mesh>
         {/* Koruny stromů */}
         {[[0, 1.2, 0, 0.5], [0.15, 0.95, 0.1, 0.38], [-0.1, 1.0, 0.1, 0.35], [0, 1.5, 0, 0.35]].map(([x, y, z, r], i) => (
-          <mesh key={i} position={[x, y, z]} castShadow>
+          <mesh key={i} position={[x, y, z]}>
             <sphereGeometry args={[r, 8, 8]} />
             <meshStandardMaterial
               color={i === 0 ? "#0a4010" : "#1D9E75"}
@@ -386,25 +386,25 @@ const PlayerFigurine = ({
         <group ref={bodyRef} position={[0, 0.05, 0]}>
 
           {/* Základna / boty */}
-          <mesh position={[0, 0, 0]} castShadow>
+          <mesh position={[0, 0, 0]}>
             <cylinderGeometry args={[0.13, 0.15, 0.12, 10]} />
             <meshStandardMaterial color="#111" roughness={0.8} />
           </mesh>
 
           {/* Nohy */}
-          <mesh position={[-0.07, 0.22, 0]} castShadow>
+          <mesh position={[-0.07, 0.22, 0]}>
             <cylinderGeometry args={[0.055, 0.065, 0.26, 8]} />
             <meshStandardMaterial color={darkColor} roughness={0.65} metalness={0.05}
               emissive={color} emissiveIntensity={emissiveInt * 0.5} />
           </mesh>
-          <mesh position={[0.07, 0.22, 0]} castShadow>
+          <mesh position={[0.07, 0.22, 0]}>
             <cylinderGeometry args={[0.055, 0.065, 0.26, 8]} />
             <meshStandardMaterial color={darkColor} roughness={0.65} metalness={0.05}
               emissive={color} emissiveIntensity={emissiveInt * 0.5} />
           </mesh>
 
           {/* Trup */}
-          <mesh position={[0, 0.48, 0]} castShadow>
+          <mesh position={[0, 0.48, 0]}>
             <cylinderGeometry args={[0.14, 0.13, 0.34, 10]} />
             <meshStandardMaterial color={color} roughness={0.55} metalness={0.12}
               emissive={color} emissiveIntensity={emissiveInt} />
@@ -412,7 +412,7 @@ const PlayerFigurine = ({
 
           {/* Levé rameno + paže */}
           <group ref={lArmRef} position={[-0.17, 0.58, 0]} rotation={[0, 0, -0.25]}>
-            <mesh position={[0, -0.1, 0]} castShadow>
+            <mesh position={[0, -0.1, 0]}>
               <cylinderGeometry args={[0.045, 0.05, 0.22, 8]} />
               <meshStandardMaterial color={color} roughness={0.6}
                 emissive={color} emissiveIntensity={emissiveInt * 0.6} />
@@ -421,7 +421,7 @@ const PlayerFigurine = ({
 
           {/* Pravé rameno + paže */}
           <group ref={rArmRef} position={[0.17, 0.58, 0]} rotation={[0, 0, 0.25]}>
-            <mesh position={[0, -0.1, 0]} castShadow>
+            <mesh position={[0, -0.1, 0]}>
               <cylinderGeometry args={[0.045, 0.05, 0.22, 8]} />
               <meshStandardMaterial color={color} roughness={0.6}
                 emissive={color} emissiveIntensity={emissiveInt * 0.6} />
@@ -429,14 +429,14 @@ const PlayerFigurine = ({
           </group>
 
           {/* Krk */}
-          <mesh position={[0, 0.7, 0]} castShadow>
+          <mesh position={[0, 0.7, 0]}>
             <cylinderGeometry args={[0.055, 0.07, 0.1, 8]} />
             <meshStandardMaterial color="#d4a574" roughness={0.7} />
           </mesh>
 
           {/* Hlava */}
           <group ref={headRef} position={[0, 0.84, 0]}>
-            <mesh castShadow>
+            <mesh>
               <sphereGeometry args={[0.2, 14, 14]} />
               <meshStandardMaterial color="#e8b89a" roughness={0.65}
                 emissive={color} emissiveIntensity={emissiveInt * 0.25} />
@@ -599,15 +599,6 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         position={[8, 14, 6]}
         intensity={1.0}
         color={isInner ? "#fad5a5" : "#9090bb"}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-far={30}
-        shadow-camera-left={-12}
-        shadow-camera-right={12}
-        shadow-camera-top={12}
-        shadow-camera-bottom={-12}
-        shadow-bias={-0.001}
       />
 
       {/* Protisměrné světlo — měkké stíny */}
@@ -647,8 +638,6 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         intensity={0.4}
         distance={10}
         decay={2}
-        castShadow
-        shadow-bias={-0.001}
       />
 
       {/* Spotlight sledující aktivního hráče */}
@@ -660,8 +649,7 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         color={playerColor}
         intensity={1.2}
         distance={6}
-        decay={2}
-        castShadow={false}
+        decay={2}={false}
       />
     </>
   );
@@ -1024,13 +1012,11 @@ const GameBoard3D = () => (
     }}>
       <div style={{ position: "absolute", inset: 0 }}>
         <Canvas
-          shadows
           camera={{ position: [0, 10, 9], fov: 50 }}
           gl={{
             antialias:        true,
             alpha:            false,
             powerPreference:  "high-performance",
-            // Pro správný Bloom — linear color space
             outputColorSpace: "srgb",
           }}
           dpr={[1, 2]}
