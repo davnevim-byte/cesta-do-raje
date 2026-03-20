@@ -311,7 +311,7 @@ const useSvgScale = (svgRef) => {
 
 // ── Hlavní komponenta ─────────────────────────────────────────
 const GameBoard = () => {
-  const players  = useGameStore((s) => s.players);
+  const players  = useGameStore((s) => s.players) ?? [];
   const curIdx   = useGameStore((s) => s.currentPlayerIndex);
   const isMoving = useGameStore((s) => s.isMoving);
 
