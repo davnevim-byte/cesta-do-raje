@@ -145,12 +145,13 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
 
       {/* Textura obrázku na vrchu políčka */}
       {!isEmpty && texturePath && (
-        <mesh position={[0, h + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.33, 32]} />
+        <mesh position={[0, h + 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.65, 0.65]} />
           <meshBasicMaterial
             map={texture}
             transparent
             opacity={isMovingHere ? 1.0 : isActive ? 0.95 : 0.85}
+            depthWrite={false}
           />
         </mesh>
       )}
