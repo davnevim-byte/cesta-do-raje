@@ -128,6 +128,9 @@ const initialState = {
   graceCards: 0,
   showGraceCard: false,
 
+  // Typ zařízení — mobile / tablet / tv
+  deviceType: "mobile",
+
   // Konec hry
   endResults: null,   // evaluateAllPlayers + calculateEndAwards
 
@@ -890,6 +893,10 @@ export const useGameStore = create(
       // ─────────────────────────────
       //  DALŠÍ HRÁČ
       // ─────────────────────────────
+
+      setDeviceType: (type) => {
+        set({ deviceType: type });
+      },
 
       endTurn: () => {
         setTimeout(() => get()._nextPlayer(), 800);
