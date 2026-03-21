@@ -9,6 +9,7 @@ import { useGameStore } from "../../store/gameStore";
 import { useSound } from "../../hooks/useSound";
 import { getAvatarComponent, getAvatarColor } from "../board/AvatarSVG";
 import { FruitBadge } from "../ui/FlashOverlay";
+import CertificateModal from "../modals/CertificateModal";
 
 // ── Fyzikální konfety ─────────────────────────────────────────
 
@@ -232,6 +233,7 @@ export const EndScreen = () => {
   const goToLogin   = useGameStore((s) => s.goToLogin);
   const { sounds }  = useSound();
   const [phase, setPhase] = useState(0);
+  const [showCerts, setShowCerts] = useState(false);
 
   useEffect(() => {
     if (!endResults) return;
@@ -384,12 +386,44 @@ export const EndScreen = () => {
                   borderRadius:12, color:"#555",
                   fontSize:14, cursor:"pointer", fontFamily:"inherit",
                 }}>
-                Odhlásit
+                Odhlasit
               </button>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Certifikaty */}
+        <AnimatePresence>
+          {phase >= 2 && (
+            <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
+              transition={{ delay:0.8 }}
+              style={{ marginTop:16 }}>
+              <motion.button
+                onClick={() => setShowCerts(true)}
+                whileHover={{ scale:1.02 }} whileTap={{ scale:0.97 }}
+                style={{
+                  width:"100%", padding:"13px",
+                  background:"rgba(212,172,13,0.1)",
+                  border:"1.5px solid rgba(212,172,13,0.4)",
+                  borderRadius:12, color:"#FAC775",
+                  fontSize:14, fontWeight:700,
+                  cursor:"pointer", fontFamily:"inherit",
+                }}>
+                Certifikaty hracu ke stazeni
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
+
+      {/* Certificate modal */}
+      {showCerts && (
+        <CertificateModal
+          players={sorted}
+          onClose={() => setShowCerts(false)}
+        />
+      )}
     </div>
   );
 };
