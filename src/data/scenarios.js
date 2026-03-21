@@ -656,7 +656,6 @@ export const CONGREGATION_SCENARIOS = [
     successCriteria: "Skupina hlasuje — řekl/a {currentPlayer} verš o naději? Byl nový (nezazněl dřív)? Celá skupina se zapojila?",
   },
 
-];
 
 
   // ── Regionální sjezd + Přednáška pro veřejnost ──────────
@@ -720,6 +719,8 @@ export const CONGREGATION_SCENARIOS = [
     hint: "Zduraznit: dobrovolna prace, zadne sbirky, vstup zdarma pro kohokoliv.",
     successCriteria: "Skupina hlasuje: vysvetleni bylo jasne a pozitivne?",
   },
+
+];
 
 export const WITNESSING_SCENARIOS = [
   ...DOORS_SCENARIOS,
