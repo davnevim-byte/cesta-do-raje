@@ -1,7 +1,7 @@
 // ============================================================
 //  POLÍČKA HERNÍ DESKY — Cesta do Ráje
 //  Terminologie: NWT, jw.org
-//
+/
 //  Každé políčko má:
 //    name        — zobrazovaný název
 //    type        — kategorie (negative / positive / special / doors / entry / start / empty)
