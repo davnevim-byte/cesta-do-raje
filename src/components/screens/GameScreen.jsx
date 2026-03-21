@@ -18,6 +18,7 @@ import WildCardModal from "../modals/WildCardModal";
 import { useMusic } from "../../hooks/useMusic";
 import { DisplaySizeControl } from "../ui/DisplaySizeControl";
 import TurnLogModal from "../modals/TurnLogModal";
+import BonusRoundModal from "../modals/BonusRoundModal";
 import ServiceModal from "../modals/ServiceModal";
 import CongregationModal from "../modals/CongregationModal";
 import ActivityModal from "../modals/ActivityModal";
@@ -106,6 +107,7 @@ export const GameScreen = () => {
       <GraceCardModal />
       <DisplaySizeControl />
       {showLog && <TurnLogModal onClose={() => setShowLog(false)} />}
+      <BonusRoundModal />
       <AnimatePresence>
         {transition.show && transition.player && (
           <InnerCircleTransition
