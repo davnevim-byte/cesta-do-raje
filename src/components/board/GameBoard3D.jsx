@@ -50,6 +50,8 @@ const TILE_ID_COLORS = {
   OVOCE:    { top: "#041a08", emissive: "#1D7A3A", emissiveInt: 0.30, height: 0.18, rim: "#0a4a1a" },
   STAVBY:   { top: "#1a1205", emissive: "#d4ac0d", emissiveInt: 0.28, height: 0.20, rim: "#8a6a05" },
   PRIHLASKA:{ top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.30, height: 0.20, rim: "#1a5a8a" },
+  SJEZD:    { top: "#0a0a2a", emissive: "#5B4AD4", emissiveInt: 0.40, height: 0.24, rim: "#2a1a8a" },
+  PREDNASKA:{ top: "#0a1a2a", emissive: "#378ADD", emissiveInt: 0.38, height: 0.22, rim: "#1a4a8a" },
 };
 
 // Textury přímo jako materiál hexagonu (jen pro typy kde to dává smysl)
@@ -75,6 +77,8 @@ const TILE_ID_EMOJI = {
   OVOCE:    "🌿",
   STAVBY:   "🔨",
   PRIHLASKA:"📝",
+  SJEZD:    "🏟️",
+  PREDNASKA:"🎤",
 };
 
 // Čitelnější ikony — emoji jako text na billboardu
