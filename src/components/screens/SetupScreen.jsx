@@ -19,10 +19,14 @@ export const SetupScreen = () => {
   const [avatars,     setAvatars]     = useState(AVATARS.map((a) => a.id));
   const [difficulty,  setDifficulty]  = useState("EASY");
   const [timer,       setTimer]       = useState(60);
-  const [step,        setStep]        = useState(1); // 1 = hráči, 2 = nastavení
+  const [step,        setStep]        = useState(0); // 0 = zařízení, 1 = hráči, 2 = nastavení
+  const [deviceType,  setDeviceType]  = useState(null);
+
+  const setDeviceTypeStore = useGameStore((s) => s.setDeviceType);
 
   const handleStart = () => {
     const validNames = names.slice(0, playerCount);
+    setDeviceTypeStore(deviceType ?? "mobile");
     startGame(playerCount, validNames, avatars.slice(0, playerCount), difficulty, timer);
   };
 
@@ -56,7 +60,57 @@ export const SetupScreen = () => {
         </motion.div>
 
         <AnimatePresence mode="wait">
-          {step === 1 ? (
+          {step === 0 ? (
+            <motion.div
+              key="step0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              style={{ display: "flex", flexDirection: "column", gap: 16 }}
+            >
+              <div style={{ textAlign: "center", marginBottom: 8 }}>
+                <div style={{ fontSize: 14, color: "#666", marginBottom: 4 }}>
+                  Na jakém zařízení hrajete?
+                </div>
+                <div style={{ fontSize: 12, color: "#444" }}>
+                  Podle toho se přizpůsobí rozložení hry
+                </div>
+              </div>
+
+              {[
+                { id: "mobile",  emoji: "📱", label: "Telefon",       desc: "Svislý layout, kompaktní" },
+                { id: "tablet",  emoji: "💻", label: "PC / Tablet",   desc: "Boční panel, větší deska" },
+                { id: "tv",      emoji: "📺", label: "TV / Projektor",desc: "Maximální velikost, velké UI" },
+              ].map((device) => (
+                <motion.button
+                  key={device.id}
+                  onClick={() => { setDeviceType(device.id); setStep(1); }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 16,
+                    padding: "18px 20px",
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: 14,
+                    cursor: "pointer", fontFamily: "inherit",
+                    textAlign: "left", width: "100%",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.border = "1px solid rgba(29,158,117,0.4)"}
+                  onMouseLeave={(e) => e.currentTarget.style.border = "1px solid rgba(255,255,255,0.08)"}
+                >
+                  <span style={{ fontSize: 32 }}>{device.emoji}</span>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: "#9FE1CB", marginBottom: 2 }}>
+                      {device.label}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#555" }}>{device.desc}</div>
+                  </div>
+                </motion.button>
+              ))}
+            </motion.div>
+          ) : step === 1 ? (
             <motion.div
               key="step1"
               initial={{ opacity: 0, x: 20 }}
