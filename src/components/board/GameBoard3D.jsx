@@ -15,6 +15,7 @@ import { OUTER_TILES, INNER_TILES } from "../../data/tiles";
 import { getAvatarColor } from "./AvatarSVG";
 import DiceRoller3D from "./DiceRoller3D";
 import { useDisplaySize } from "../../hooks/useDisplaySize";
+import { useGameStore } from "../../store/gameStore";
 import PostProcessing from "./PostProcessing";
 
 // ─── Konstanty ────────────────────────────────────────────────
@@ -917,14 +918,19 @@ const DynamicFog = ({ activeCircle }) => {
 // ─── Pozadí scény — textura ──────────────────────────────────
 const SceneBackground = () => {
   const { scene } = useThree();
+  const deviceType = useGameStore((s) => s.deviceType ?? "mobile");
+  const isWide     = deviceType === "tablet" || deviceType === "tv";
+  const bgFile     = isWide
+    ? "/cesta-do-raje/background-wide.jpg"
+    : "/cesta-do-raje/background.jpg";
 
   useEffect(() => {
     const loader = new THREE.TextureLoader();
-    loader.load('/cesta-do-raje/background.jpg', (texture) => {
+    loader.load(bgFile, (texture) => {
       scene.background = texture;
     });
     return () => { scene.background = null; };
-  }, [scene]);
+  }, [scene, bgFile]);
 
   return null;
 };
@@ -1098,9 +1104,41 @@ const Scene3D = () => {
 
 // ─── Hlavní komponenta ────────────────────────────────────────
 const GameBoard3D = () => {
-  const { size } = useDisplaySize();
-  const maxWidth = Math.round(600 * (size / 100));
+  const { size }   = useDisplaySize();
+  const deviceType = useGameStore((s) => s.deviceType ?? "mobile");
+  const isWide     = deviceType === "tablet" || deviceType === "tv";
+  const maxWidth   = Math.round(600 * (size / 100));
 
+  // Wide mode — Canvas zabere celý prostor který mu dá GameScreen
+  if (isWide) {
+    return (
+      <div style={{
+        width: "100%", height: "100%",
+        display: "flex", flexDirection: "column",
+      }}>
+        {/* 3D Canvas — plná výška */}
+        <div style={{ flex: 1, position: "relative", minHeight: 0 }}>
+          <Canvas
+            camera={{ position: [0, 10, 9], fov: 50 }}
+            gl={{
+              antialias:        true,
+              alpha:            true,
+              powerPreference:  "high-performance",
+              outputColorSpace: "srgb",
+            }}
+            dpr={[1, 2]}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <Suspense fallback={null}>
+              <Scene3D />
+            </Suspense>
+          </Canvas>
+        </div>
+      </div>
+    );
+  }
+
+  // Mobile mode — původní layout s legendou a kostkou
   return (
     <div style={{
       width: "100%",
