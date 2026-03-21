@@ -102,6 +102,33 @@ const createLoop = (ctx, masterGain, tones) => {
   };
 };
 
+// ── Načtení audio souboru ────────────────────────────────────
+const audioCache = {};
+
+const loadAudio = async (ctx, url) => {
+  if (audioCache[url]) return audioCache[url];
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) return null;
+    const buf = await resp.arrayBuffer();
+    const decoded = await ctx.decodeAudioData(buf);
+    audioCache[url] = decoded;
+    return decoded;
+  } catch {
+    return null;
+  }
+};
+
+const createAmbientSource = (ctx, buffer, gainNode) => {
+  if (!buffer) return null;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  src.connect(gainNode);
+  src.start(0);
+  return src;
+};
+
 // ── Hook ─────────────────────────────────────────────────────
 export const useMusic = () => {
   const isMuted = useGameStore((s) => s.isMuted ?? false);
@@ -112,6 +139,10 @@ export const useMusic = () => {
   const currentZone = useRef(null);
   const initialized = useRef(false);
   const stoppedRef  = useRef(false);
+  // Ambient MP3 vrstvy
+  const ambientGainRef   = useRef(null);
+  const ambientSourceRef = useRef(null);
+  const ambientZone      = useRef(null);
 
   // ── Inicializace ─────────────────────────────────────────
   const init = useCallback(async () => {
@@ -127,6 +158,12 @@ export const useMusic = () => {
     master.gain.setValueAtTime(isMuted ? 0 : 0.75, ctx.currentTime);
     master.connect(ctx.destination);
     masterRef.current = master;
+
+    // Ambient gain — pro MP3 vrstvy (ptáci, vodopád)
+    const ambientGain = ctx.createGain();
+    ambientGain.gain.setValueAtTime(0, ctx.currentTime);
+    ambientGain.connect(master);
+    ambientGainRef.current = ambientGain;
 
     // Vytvoř obě smyčky — startují tiše
     outerLoop.current = createLoop(ctx, master, OUTER_CONFIG);
@@ -157,6 +194,39 @@ export const useMusic = () => {
       innerLoop.current.fadeIn(3);
       outerLoop.current.fadeOut(2.5);
     }
+
+    // Ambient MP3 - nacti a prehraj spravny soubor
+    if (ambientGainRef.current && ambientZone.current !== zone) {
+      ambientZone.current = zone;
+      const ambientFile = zone === "outer"
+        ? "/cesta-do-raje/sounds/ambient-outer.mp3"
+        : "/cesta-do-raje/sounds/ambient-inner.mp3";
+
+      // Fade out stary ambient
+      const ag = ambientGainRef.current;
+      const now = ctx.currentTime;
+      ag.gain.cancelScheduledValues(now);
+      ag.gain.setValueAtTime(ag.gain.value, now);
+      ag.gain.linearRampToValueAtTime(0, now + 2);
+
+      // Zastav stary source
+      try { ambientSourceRef.current?.stop(); } catch {}
+      ambientSourceRef.current = null;
+
+      // Nacti a spust novy
+      setTimeout(async () => {
+        if (stoppedRef.current) return;
+        const buffer = await loadAudio(ctx, ambientFile);
+        if (!buffer || stoppedRef.current) return;
+        const src = createAmbientSource(ctx, buffer, ag);
+        ambientSourceRef.current = src;
+        // Fade in
+        const now2 = ctx.currentTime;
+        ag.gain.cancelScheduledValues(now2);
+        ag.gain.setValueAtTime(0, now2);
+        ag.gain.linearRampToValueAtTime(0.55, now2 + 3);
+      }, 2200);
+    }
   }, [init]);
 
   // ── Zastavení ────────────────────────────────────────────
@@ -166,6 +236,18 @@ export const useMusic = () => {
 
     outerLoop.current?.fadeOut(1.2);
     innerLoop.current?.fadeOut(1.2);
+
+    // Fade out ambient
+    if (ambientGainRef.current) {
+      const ctx2 = getCtx();
+      if (ctx2) {
+        ambientGainRef.current.gain.linearRampToValueAtTime(0, ctx2.currentTime + 1.2);
+      }
+    }
+    setTimeout(() => {
+      try { ambientSourceRef.current?.stop(); } catch {}
+      ambientSourceRef.current = null;
+    }, 1400);
 
     // Zastavíme oscilátory po fade-outu
     setTimeout(() => {
