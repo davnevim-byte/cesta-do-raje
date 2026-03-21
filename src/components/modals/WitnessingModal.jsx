@@ -3,6 +3,7 @@
 //  Dramatické otevření, countdown timer, hlasování skupiny
 // ============================================================
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore } from "../../store/gameStore";
 import { useSound } from "../../hooks/useSound";
@@ -49,12 +50,14 @@ const TimerRing = ({ seconds, total = 180 }) => {
 };
 
 const WitnessingModal = () => {
-  const showWitnessing      = useGameStore((s) => s.showWitnessing);
-  const currentWitnessing   = useGameStore((s) => s.currentWitnessing);
-  const witnessingTime      = useGameStore((s) => s.witnessingTimeRemaining);
-  const answerWitnessing    = useGameStore((s) => s.answerWitnessing);
-  const currentPlayer       = useGameStore((s) => s.players[s.currentPlayerIndex]);
-  const { sounds }          = useSound();
+  const showWitnessing        = useGameStore((s) => s.showWitnessing);
+  const currentWitnessing     = useGameStore((s) => s.currentWitnessing);
+  const witnessingTime        = useGameStore((s) => s.witnessingTimeRemaining);
+  const witnessingStarted     = useGameStore((s) => s.witnessingStarted);
+  const answerWitnessing      = useGameStore((s) => s.answerWitnessing);
+  const startWitnessingTimer  = useGameStore((s) => s.startWitnessingTimer);
+  const currentPlayer         = useGameStore((s) => s.players[s.currentPlayerIndex]);
+  const { sounds }            = useSound();
 
   const handleResult = (success) => {
     if (success) sounds.witnessSuccess();
@@ -122,9 +125,27 @@ const WitnessingModal = () => {
                 </div>
               </div>
             </div>
-            {witnessingTime !== null && (
+            {!witnessingStarted ? (
+              <motion.button
+                onClick={() => { sounds.dice?.(); startWitnessingTimer(); }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{ scale: [1, 1.04, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+                style={{
+                  padding: "10px 20px",
+                  background: "#1D9E75",
+                  border: "none", borderRadius: 10,
+                  color: "#fff", fontSize: 14, fontWeight: 700,
+                  cursor: "pointer", fontFamily: "inherit",
+                  boxShadow: "0 0 16px rgba(29,158,117,0.5)",
+                }}
+              >
+                ▶ START
+              </motion.button>
+            ) : witnessingTime !== null ? (
               <TimerRing seconds={witnessingTime} total={180} />
-            )}
+            ) : null}
           </div>
 
           <div style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 14, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
@@ -224,37 +245,55 @@ const WitnessingModal = () => {
 
             {/* Hlasování */}
             <div>
-              <div style={{
-                fontSize: 12, color: "#666",
-                textAlign: "center", marginBottom: 10,
-              }}>
-                {scenario.successCriteria}
-              </div>
+              {!witnessingStarted && (
+                <div style={{
+                  fontSize: 12, color: "#1D9E75",
+                  textAlign: "center", marginBottom: 10,
+                  padding: "8px", background: "rgba(29,158,117,0.08)",
+                  borderRadius: 8, border: "1px solid rgba(29,158,117,0.2)",
+                }}>
+                  ⏸ Přečti si situaci a stiskni START až budete připraveni
+                </div>
+              )}
+              {witnessingStarted && (
+                <div style={{
+                  fontSize: 12, color: "#666",
+                  textAlign: "center", marginBottom: 10,
+                }}>
+                  {scenario.successCriteria}
+                </div>
+              )}
               <div style={{ display: "flex", gap: 10 }}>
                 <motion.button
-                  onClick={() => handleResult(true)}
+                  onClick={() => witnessingStarted && handleResult(true)}
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}
                   style={{
                     flex: 1, padding: "13px",
-                    background: "#0a2a1a",
-                    border: "1.5px solid #1D9E75",
-                    borderRadius: 10, color: "#9FE1CB",
+                    background: witnessingStarted ? "#0a2a1a" : "rgba(10,42,26,0.3)",
+                    border: `1.5px solid ${witnessingStarted ? "#1D9E75" : "#1a3a2a"}`,
+                    borderRadius: 10,
+                    color: witnessingStarted ? "#9FE1CB" : "#2a5a3a",
                     fontSize: 14, fontWeight: 600,
-                    cursor: "pointer", fontFamily: "inherit",
+                    cursor: witnessingStarted ? "pointer" : "not-allowed",
+                    fontFamily: "inherit",
+                    transition: "all 0.3s",
                   }}
                 >
                   ✓ Úspěšné svědectví
                 </motion.button>
                 <motion.button
-                  onClick={() => handleResult(false)}
+                  onClick={() => witnessingStarted && handleResult(false)}
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}
                   style={{
                     flex: 1, padding: "13px",
-                    background: "#1a0a0a",
-                    border: "1.5px solid #E24B4A",
-                    borderRadius: 10, color: "#F09595",
+                    background: witnessingStarted ? "#1a0a0a" : "rgba(26,10,10,0.3)",
+                    border: `1.5px solid ${witnessingStarted ? "#E24B4A" : "#3a1a1a"}`,
+                    borderRadius: 10,
+                    color: witnessingStarted ? "#F09595" : "#5a2a2a",
                     fontSize: 14, fontWeight: 600,
-                    cursor: "pointer", fontFamily: "inherit",
+                    cursor: witnessingStarted ? "pointer" : "not-allowed",
+                    fontFamily: "inherit",
+                    transition: "all 0.3s",
                   }}
                 >
                   ✗ Neúspěšné
