@@ -16,6 +16,9 @@ import { TileModal } from "../modals/TileModal";
 import WildCardModal from "../modals/WildCardModal";
 import { useMusic } from "../../hooks/useMusic";
 import { DisplaySizeControl } from "../ui/DisplaySizeControl";
+import ServiceModal from "../modals/ServiceModal";
+import CongregationModal from "../modals/CongregationModal";
+import ActivityModal from "../modals/ActivityModal";
 import { useSound } from "../../hooks/useSound";
 
 export const GameScreen = () => {
@@ -153,6 +156,11 @@ export const GameScreen = () => {
       <WitnessingModal />
       <TileModal />
       <WildCardModal />
+
+      {/* NOVÉ MODALY */}
+      <ServiceModal />
+      <CongregationModal />
+      <ActivityModal />
 
       {/* NASTAVENÍ VELIKOSTI */}
       <DisplaySizeControl />
