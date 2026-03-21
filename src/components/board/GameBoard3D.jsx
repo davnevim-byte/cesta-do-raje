@@ -442,40 +442,39 @@ const AVATAR_GLB_MAP = {
 const KenneyCharacter = ({ avatarId, color, isActive }) => {
   const url = AVATAR_GLB_MAP[avatarId] ?? AVATAR_GLB_MAP.AVATAR01;
   const { scene } = useGLTF(url);
+  const groupRef = useRef();
 
-  // Klon + autocentering pomocí Box3
-  const { cloned, yOffset } = useMemo(() => {
+  useEffect(() => {
+    if (!groupRef.current || !scene) return;
+
+    // Vycisti group
+    while (groupRef.current.children.length > 0) {
+      groupRef.current.remove(groupRef.current.children[0]);
+    }
+
+    // Klon scene
     const c = scene.clone(true);
-    c.position.set(0, 0, 0);
-    c.rotation.set(0, 0, 0);
-    c.scale.set(1, 1, 1);
 
-    // Změř skutečné rozměry modelu
-    const box = new THREE.Box3().setFromObject(c);
-    // Zarovnej spodek modelu na Y=0
-    const yOff = -box.min.y;
-
-    // Obarvi model
+    // Obarvi meshe
     c.traverse((node) => {
       if (node.isMesh && node.material) {
-        node.material = node.material.clone();
-        node.material.emissive = new THREE.Color(color);
-        node.material.emissiveIntensity = isActive ? 0.3 : 0.08;
+        const mat = node.material.clone();
+        mat.emissive = new THREE.Color(color);
+        mat.emissiveIntensity = isActive ? 0.3 : 0.08;
+        node.material = mat;
       }
     });
-    return { cloned: c, yOffset: yOff };
+
+    // Zjisti bounding box a posun model aby nohy byly na Y=0
+    const box = new THREE.Box3().setFromObject(c);
+    c.position.y = -box.min.y;
+
+    groupRef.current.add(c);
   }, [scene, color, isActive]);
 
   const scale = 0.85;
 
-  return (
-    <primitive
-      object={cloned}
-      scale={[scale, scale, scale]}
-      position={[0, yOffset * scale, 0]}
-      rotation={[0, Math.PI, 0]}
-    />
-  );
+  return <group ref={groupRef} scale={[scale, scale, scale]} rotation={[0, Math.PI, 0]} />;
 };
 
 // ─── 3D figurka hráče ─────────────────────────────────────────
