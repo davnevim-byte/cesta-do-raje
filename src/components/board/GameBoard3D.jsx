@@ -295,52 +295,128 @@ const BoardBase = () => (
   </group>
 );
 
-// ─── Ráj — střed s stromem ────────────────────────────────────
-const ParadiseCenter = () => {
-  const groupRef = useRef();
+// ─── Ráj — střed s animovaným stromem ────────────────────────
+const AnimatedLeaf = ({ position, phase }) => {
+  const meshRef = useRef();
   useFrame((state) => {
-    if (!groupRef.current) return;
-    groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+    if (!meshRef.current) return;
+    const t = state.clock.elapsedTime;
+    meshRef.current.rotation.z = Math.sin(t * 0.8 + phase) * 0.08;
+    meshRef.current.rotation.x = Math.sin(t * 0.6 + phase) * 0.05;
   });
+  return (
+    <mesh ref={meshRef} position={position}>
+      <sphereGeometry args={[0.06, 6, 6]} />
+      <meshStandardMaterial color="#2ecc71" emissive="#1D9E75" emissiveIntensity={0.3} roughness={0.7} />
+    </mesh>
+  );
+};
+
+const ParadiseCenter = () => {
+  const trunkRef  = useRef();
+  const crownRef  = useRef();
+  const glowRef   = useRef();
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+
+    // Jemné houpání kmene
+    if (trunkRef.current) {
+      trunkRef.current.rotation.z = Math.sin(t * 0.5) * 0.025;
+      trunkRef.current.rotation.x = Math.sin(t * 0.37) * 0.018;
+    }
+
+    // Koruny se houpe trochu víc
+    if (crownRef.current) {
+      crownRef.current.rotation.z = Math.sin(t * 0.55 + 0.3) * 0.04;
+      crownRef.current.rotation.x = Math.sin(t * 0.42) * 0.03;
+      crownRef.current.position.y = 0 + Math.sin(t * 0.7) * 0.015;
+    }
+
+    // Pulsující záre pod stromem
+    if (glowRef.current) {
+      glowRef.current.intensity = 1.8 + Math.sin(t * 1.2) * 0.5;
+    }
+  });
+
+  // Pozice lístků pro animaci
+  const leafPositions = [
+    [0.3, 1.35, 0.1], [-0.28, 1.25, 0.08], [0.1, 1.55, 0.2],
+    [-0.15, 1.45, -0.15], [0.25, 1.1, -0.2], [-0.22, 1.15, 0.18],
+    [0.35, 1.0, 0.05], [-0.3, 0.95, -0.1],
+  ];
 
   return (
     <group>
-      {/* Světlo ráje */}
-      <pointLight position={[0, 3, 0]} color="#9FE1CB" intensity={2} distance={4} />
-      <pointLight position={[0, 1, 0]} color="#f5d76e" intensity={0.5} distance={2} />
+      {/* Světla */}
+      <pointLight ref={glowRef} position={[0, 2.5, 0]} color="#9FE1CB" intensity={2} distance={4} />
+      <pointLight position={[0, 0.8, 0]} color="#f5d76e" intensity={0.6} distance={2.5} />
 
-      {/* Rotující skupina — strom */}
-      <group ref={groupRef}>
-        {/* Kmen */}
-        <mesh position={[0, 0.6, 0]}>
-          <cylinderGeometry args={[0.06, 0.1, 0.8, 8]} />
-          <meshStandardMaterial color="#5a3010" roughness={0.9} />
+      {/* Kmen — houpající se */}
+      <group ref={trunkRef}>
+        {/* Hlavní kmen */}
+        <mesh position={[0, 0.45, 0]}>
+          <cylinderGeometry args={[0.055, 0.1, 0.9, 8]} />
+          <meshStandardMaterial color="#6b3a18" roughness={0.95} />
         </mesh>
-        {/* Koruny stromů */}
-        {[[0, 1.2, 0, 0.5], [0.15, 0.95, 0.1, 0.38], [-0.1, 1.0, 0.1, 0.35], [0, 1.5, 0, 0.35]].map(([x, y, z, r], i) => (
-          <mesh key={i} position={[x, y, z]}>
-            <sphereGeometry args={[r, 8, 8]} />
-            <meshStandardMaterial
-              color={i === 0 ? "#0a4010" : "#1D9E75"}
-              emissive="#1D9E75"
-              emissiveIntensity={0.15}
-              roughness={0.8}
-            />
-          </mesh>
-        ))}
+        {/* Kořeny */}
+        {[0, 1, 2, 3].map((i) => {
+          const a = (i / 4) * Math.PI * 2;
+          return (
+            <mesh key={i} position={[Math.cos(a) * 0.1, 0.05, Math.sin(a) * 0.1]}
+              rotation={[0, a, 0.4]}>
+              <cylinderGeometry args={[0.02, 0.04, 0.25, 5]} />
+              <meshStandardMaterial color="#5a3010" roughness={0.98} />
+            </mesh>
+          );
+        })}
+
+        {/* Větve */}
+        <mesh position={[0.18, 0.85, 0]} rotation={[0, 0, -0.6]}>
+          <cylinderGeometry args={[0.018, 0.03, 0.38, 6]} />
+          <meshStandardMaterial color="#6b3a18" roughness={0.95} />
+        </mesh>
+        <mesh position={[-0.16, 0.9, 0.08]} rotation={[0.1, 0, 0.5]}>
+          <cylinderGeometry args={[0.018, 0.03, 0.35, 6]} />
+          <meshStandardMaterial color="#6b3a18" roughness={0.95} />
+        </mesh>
+        <mesh position={[0.05, 1.0, -0.15]} rotation={[-0.4, 0, -0.2]}>
+          <cylinderGeometry args={[0.015, 0.025, 0.3, 6]} />
+          <meshStandardMaterial color="#6b3a18" roughness={0.95} />
+        </mesh>
+
+        {/* Koruna — houpající se odděleně */}
+        <group ref={crownRef}>
+          {/* Hlavní koruny */}
+          {[
+            [0,    1.25, 0,    0.52, "#0d4a15"],
+            [0.18, 1.05, 0.05, 0.38, "#1a6b22"],
+            [-0.16,1.1,  0.08, 0.36, "#1D9E75"],
+            [0,    1.58, 0,    0.36, "#1a7a30"],
+            [0.1,  0.95, -0.16,0.3,  "#16602a"],
+            [-0.1, 1.35, 0.2,  0.28, "#1D9E75"],
+          ].map(([x, y, z, r, col], i) => (
+            <mesh key={i} position={[x, y, z]}>
+              <sphereGeometry args={[r, 10, 10]} />
+              <meshStandardMaterial
+                color={col}
+                emissive="#1D9E75"
+                emissiveIntensity={0.18 + i * 0.02}
+                roughness={0.75}
+              />
+            </mesh>
+          ))}
+
+          {/* Animované lístky */}
+          {leafPositions.map((pos, i) => (
+            <AnimatedLeaf key={i} position={pos} phase={i * 0.8} />
+          ))}
+        </group>
       </group>
 
-      {/* Sparkles — světlušky v ráji */}
-      <Sparkles
-        count={30}
-        scale={[2.5, 2, 2.5]}
-        size={2}
-        speed={0.3}
-        color="#9FE1CB"
-        position={[0, 0.5, 0]}
-      />
-
-{/* Text RÁJ odstraněn */}
+      {/* Svetlušky */}
+      <Sparkles count={40} scale={[2.8, 2.2, 2.8]} size={2.5} speed={0.35} color="#9FE1CB" position={[0, 0.6, 0]} />
+      <Sparkles count={15} scale={[1.5, 1.0, 1.5]} size={3} speed={0.2} color="#f5d76e" position={[0, 1.2, 0]} />
     </group>
   );
 };
