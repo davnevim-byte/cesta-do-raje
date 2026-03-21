@@ -3,7 +3,7 @@
 //  Pohled z 45° · 3D políčka · filmová kamera · atmosféra
 // ============================================================
 
-import { useRef, useState, useCallback, useMemo, useEffect, Suspense } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Text, Billboard, Sparkles, Stars, useTexture,
@@ -13,8 +13,31 @@ import * as THREE from "three";
 import { useGameStore } from "../../store/gameStore";
 import { OUTER_TILES, INNER_TILES } from "../../data/tiles";
 import { getAvatarColor } from "./AvatarSVG";
+
+// Mapování typu políčka na obrázek
+const TILE_IMAGES = {
+  negative: "/cesta-do-raje/tiles/tile_negative.jpg",
+  doors:    "/cesta-do-raje/tiles/tile_doors.jpg",
+  start:    "/cesta-do-raje/tiles/tile_start.jpg",
+  entry:    "/cesta-do-raje/tiles/tile_entry.jpg",
+  study:    "/cesta-do-raje/tiles/tile_study.jpg",
+  prayer:   "/cesta-do-raje/tiles/tile_prayer.jpg",
+  special:  "/cesta-do-raje/tiles/tile_special.jpg",
+};
+
+// Přednačtení všech textur najednou — zabrání blikání
+const TileTextureCache = {};
+const loadTileTexture = (type) => {
+  const url = TILE_IMAGES[type];
+  if (!url) return null;
+  if (TileTextureCache[type]) return TileTextureCache[type];
+  const loader = new THREE.TextureLoader();
+  const tex = loader.load(url);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  TileTextureCache[type] = tex;
+  return tex;
+};
 import DiceRoller3D from "./DiceRoller3D";
-import { useDisplaySize } from "../../hooks/useDisplaySize";
 import PostProcessing from "./PostProcessing";
 
 // ─── Konstanty ────────────────────────────────────────────────
@@ -39,21 +62,6 @@ const TILE_COLORS = {
   study:    { top: "#062014", emissive: "#27ae60", emissiveInt: 0.22, height: 0.18, rim: "#1a7a40" },
   prayer:   { top: "#041408", emissive: "#1D9E75", emissiveInt: 0.20, height: 0.16, rim: "#0a5a3a" },
   special:  { top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.25, height: 0.18, rim: "#1a5a8a" },
-};
-
-// Textury přímo jako materiál hexagonu (jen pro typy kde to dává smysl)
-const TILE_TEXTURES = {
-  negative: "/cesta-do-raje/tiles/tile_negative.jpg",
-  study:    "/cesta-do-raje/tiles/tile_study.jpg",
-  prayer:   "/cesta-do-raje/tiles/tile_prayer.jpg",
-};
-
-// Emoji ikony pro zbývající typy
-const TILE_EMOJI = {
-  doors:   "🚪",
-  start:   "▶",
-  entry:   "🤝",
-  special: "⭐",
 };
 
 // Čitelnější ikony — emoji jako text na billboardu
@@ -83,11 +91,6 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
   const col      = TILE_COLORS[tile.type] ?? TILE_COLORS.empty;
   const isEmpty  = tile.type === "empty";
   const h        = col.height;
-  const tileType   = tile.type;
-  const hasTexture = tileType in TILE_TEXTURES;
-  const hasEmoji   = tileType in TILE_EMOJI;
-  // useTexture musí být vždy volán - fallback na negative pro typy bez textury
-  const tileTexture = useTexture(TILE_TEXTURES[tileType] ?? TILE_TEXTURES.negative);
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -116,6 +119,9 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
     }
   });
 
+  // Načti texturu pro tento typ políčka
+  const tileTexture = useMemo(() => loadTileTexture(tile.type), [tile.type]);
+
   return (
     <group ref={groupRef} position={position}>
 
@@ -132,7 +138,7 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
       )}
 
       {/* Hlavní tělo — hexagon */}
-      <mesh position={[0, h / 2, 0]}>
+      <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <cylinderGeometry args={[0.37, 0.37, h, TILE_SEGMENTS]} />
         <meshStandardMaterial
           color={col.top}
@@ -147,21 +153,21 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
         />
       </mesh>
 
-      {/* Textura přímo na vrchu jako plochý disk */}
-      {!isEmpty && hasTexture && (
-        <mesh position={[0, h + 0.008, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.35, 6]} />
+      {/* Obrázek na horní ploše — kruhový disk s texturou */}
+      {tileTexture && (
+        <mesh position={[0, h + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.34, TILE_SEGMENTS]} />
           <meshStandardMaterial
             map={tileTexture}
-            emissive={col.emissive}
-            emissiveIntensity={isMovingHere ? 0.8 : isActive ? 0.4 : 0.15}
+            transparent
+            opacity={isMovingHere ? 1 : isActive ? 0.92 : 0.78}
             roughness={0.5}
-            metalness={0.1}
+            metalness={0.0}
+            emissive={col.emissive}
+            emissiveIntensity={isMovingHere ? 0.4 : isActive ? 0.2 : 0.05}
           />
         </mesh>
       )}
-
-
 
       {/* Spodní lem — barevný pruh */}
       <mesh ref={rimRef} position={[0, 0.03, 0]}>
@@ -189,20 +195,6 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
         </mesh>
       )}
 
-      {/* Emoji ikona pro typy s emoji */}
-      {!isEmpty && hasEmoji && (
-        <Billboard follow lockX={false} lockY={true} lockZ={false}>
-          <Text
-            position={[0, h + 0.28, 0]}
-            fontSize={0.30}
-            anchorX="center"
-            anchorY="middle"
-          >
-            {TILE_EMOJI[tileType]}
-          </Text>
-        </Billboard>
-      )}
-
       {/* Název políčka — čitelný billboard */}
       {!isEmpty && (
         <Billboard follow lockX={false} lockY={true} lockZ={false}>
@@ -228,36 +220,30 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
 // ─── Kruhová deska pod políčky ────────────────────────────────
 const BoardBase = () => (
   <group>
-    {/* Vnější disk — tmavá zemitá půda */}
-    <mesh position={[0, -0.12, 0]}>
+    {/* Vnější disk */}
+    <mesh receiveShadow position={[0, -0.12, 0]}>
       <cylinderGeometry args={[OUTER_R + 0.6, OUTER_R + 0.6, 0.12, 64]} />
-      <meshStandardMaterial
-        color="#1a1208"
-        emissive="#2a1e0a"
-        emissiveIntensity={0.05}
-        roughness={0.95}
-        metalness={0.0}
-      />
+      <meshStandardMaterial color="#080810" roughness={0.9} metalness={0.05} />
     </mesh>
 
-    {/* Vnitřní disk — sbor — tmavá zelenavá tráva */}
-    <mesh position={[0, -0.06, 0]}>
+    {/* Vnitřní disk — sbor */}
+    <mesh receiveShadow position={[0, -0.06, 0]}>
       <cylinderGeometry args={[INNER_R + 0.5, INNER_R + 0.5, 0.1, 64]} />
       <meshStandardMaterial
-        color="#0a1a0c"
+        color="#051008"
         emissive="#1D9E75"
-        emissiveIntensity={0.06}
-        roughness={0.9}
+        emissiveIntensity={0.04}
+        roughness={0.8}
       />
     </mesh>
 
     {/* Ráj — střed */}
-    <mesh position={[0, -0.03, 0]}>
+    <mesh receiveShadow position={[0, -0.03, 0]}>
       <cylinderGeometry args={[1.3, 1.3, 0.08, 32]} />
       <meshStandardMaterial
-        color="#061a0a"
+        color="#041a0c"
         emissive="#1D9E75"
-        emissiveIntensity={0.35}
+        emissiveIntensity={0.3}
         roughness={0.6}
       />
     </mesh>
@@ -271,8 +257,6 @@ const BoardBase = () => (
         emissiveIntensity={0.4}
       />
     </mesh>
-
-
   </group>
 );
 
@@ -293,13 +277,13 @@ const ParadiseCenter = () => {
       {/* Rotující skupina — strom */}
       <group ref={groupRef}>
         {/* Kmen */}
-        <mesh position={[0, 0.6, 0]}>
+        <mesh position={[0, 0.6, 0]} castShadow>
           <cylinderGeometry args={[0.06, 0.1, 0.8, 8]} />
           <meshStandardMaterial color="#5a3010" roughness={0.9} />
         </mesh>
         {/* Koruny stromů */}
         {[[0, 1.2, 0, 0.5], [0.15, 0.95, 0.1, 0.38], [-0.1, 1.0, 0.1, 0.35], [0, 1.5, 0, 0.35]].map(([x, y, z, r], i) => (
-          <mesh key={i} position={[x, y, z]}>
+          <mesh key={i} position={[x, y, z]} castShadow>
             <sphereGeometry args={[r, 8, 8]} />
             <meshStandardMaterial
               color={i === 0 ? "#0a4010" : "#1D9E75"}
@@ -445,25 +429,25 @@ const PlayerFigurine = ({
         <group ref={bodyRef} position={[0, 0.05, 0]}>
 
           {/* Základna / boty */}
-          <mesh position={[0, 0, 0]}>
+          <mesh position={[0, 0, 0]} castShadow>
             <cylinderGeometry args={[0.13, 0.15, 0.12, 10]} />
             <meshStandardMaterial color="#111" roughness={0.8} />
           </mesh>
 
           {/* Nohy */}
-          <mesh position={[-0.07, 0.22, 0]}>
+          <mesh position={[-0.07, 0.22, 0]} castShadow>
             <cylinderGeometry args={[0.055, 0.065, 0.26, 8]} />
             <meshStandardMaterial color={darkColor} roughness={0.65} metalness={0.05}
               emissive={color} emissiveIntensity={emissiveInt * 0.5} />
           </mesh>
-          <mesh position={[0.07, 0.22, 0]}>
+          <mesh position={[0.07, 0.22, 0]} castShadow>
             <cylinderGeometry args={[0.055, 0.065, 0.26, 8]} />
             <meshStandardMaterial color={darkColor} roughness={0.65} metalness={0.05}
               emissive={color} emissiveIntensity={emissiveInt * 0.5} />
           </mesh>
 
           {/* Trup */}
-          <mesh position={[0, 0.48, 0]}>
+          <mesh position={[0, 0.48, 0]} castShadow>
             <cylinderGeometry args={[0.14, 0.13, 0.34, 10]} />
             <meshStandardMaterial color={color} roughness={0.55} metalness={0.12}
               emissive={color} emissiveIntensity={emissiveInt} />
@@ -471,7 +455,7 @@ const PlayerFigurine = ({
 
           {/* Levé rameno + paže */}
           <group ref={lArmRef} position={[-0.17, 0.58, 0]} rotation={[0, 0, -0.25]}>
-            <mesh position={[0, -0.1, 0]}>
+            <mesh position={[0, -0.1, 0]} castShadow>
               <cylinderGeometry args={[0.045, 0.05, 0.22, 8]} />
               <meshStandardMaterial color={color} roughness={0.6}
                 emissive={color} emissiveIntensity={emissiveInt * 0.6} />
@@ -480,7 +464,7 @@ const PlayerFigurine = ({
 
           {/* Pravé rameno + paže */}
           <group ref={rArmRef} position={[0.17, 0.58, 0]} rotation={[0, 0, 0.25]}>
-            <mesh position={[0, -0.1, 0]}>
+            <mesh position={[0, -0.1, 0]} castShadow>
               <cylinderGeometry args={[0.045, 0.05, 0.22, 8]} />
               <meshStandardMaterial color={color} roughness={0.6}
                 emissive={color} emissiveIntensity={emissiveInt * 0.6} />
@@ -488,14 +472,14 @@ const PlayerFigurine = ({
           </group>
 
           {/* Krk */}
-          <mesh position={[0, 0.7, 0]}>
+          <mesh position={[0, 0.7, 0]} castShadow>
             <cylinderGeometry args={[0.055, 0.07, 0.1, 8]} />
             <meshStandardMaterial color="#d4a574" roughness={0.7} />
           </mesh>
 
           {/* Hlava */}
           <group ref={headRef} position={[0, 0.84, 0]}>
-            <mesh>
+            <mesh castShadow>
               <sphereGeometry args={[0.2, 14, 14]} />
               <meshStandardMaterial color="#e8b89a" roughness={0.65}
                 emissive={color} emissiveIntensity={emissiveInt * 0.25} />
@@ -658,6 +642,15 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         position={[8, 14, 6]}
         intensity={1.0}
         color={isInner ? "#fad5a5" : "#9090bb"}
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-far={30}
+        shadow-camera-left={-12}
+        shadow-camera-right={12}
+        shadow-camera-top={12}
+        shadow-camera-bottom={-12}
+        shadow-bias={-0.001}
       />
 
       {/* Protisměrné světlo — měkké stíny */}
@@ -697,6 +690,8 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         intensity={0.4}
         distance={10}
         decay={2}
+        castShadow
+        shadow-bias={-0.001}
       />
 
       {/* Spotlight sledující aktivního hráče */}
@@ -709,6 +704,7 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
         intensity={1.2}
         distance={6}
         decay={2}
+        castShadow={false}
       />
     </>
   );
@@ -883,21 +879,6 @@ const DynamicFog = ({ activeCircle }) => {
   return null;
 };
 
-// ─── Pozadí scény — textura ──────────────────────────────────
-const SceneBackground = () => {
-  const { scene } = useThree();
-
-  useEffect(() => {
-    const loader = new THREE.TextureLoader();
-    loader.load('/cesta-do-raje/background.jpg', (texture) => {
-      scene.background = texture;
-    });
-    return () => { scene.background = null; };
-  }, [scene]);
-
-  return null;
-};
-
 // ─── Hlavní Atmosphere komponenta ────────────────────────────
 const Atmosphere = ({ activeCircle }) => (
   <>
@@ -960,7 +941,7 @@ const Atmosphere = ({ activeCircle }) => (
 
 // ─── 3D Scéna — vše dohromady ────────────────────────────────
 const Scene3D = () => {
-  const players  = useGameStore((s) => s.players) ?? [];
+  const players  = useGameStore((s) => s.players);
   const curIdx        = useGameStore((s) => s.currentPlayerIndex);
   const isMoving      = useGameStore((s) => s.isMoving);
   const movingStep    = useGameStore((s) => s.movingStep);
@@ -968,16 +949,6 @@ const Scene3D = () => {
   const showTileAction   = useGameStore((s) => s.showTileAction);
   const currentTileAction = useGameStore((s) => s.currentTileAction);
   const showWitnessing   = useGameStore((s) => s.showWitnessing);
-
-  // Počkej na načtení hráčů ze store
-  if (!players || players.length === 0) {
-    return (
-      <>
-        <ambientLight intensity={0.3} />
-      </>
-    );
-  }
-
 
   const curPlayer    = players[curIdx];
   const activeCircle = curPlayer?.circle ?? "outer";
@@ -999,7 +970,6 @@ const Scene3D = () => {
 
   return (
     <>
-      <SceneBackground />
       <CameraController players={players} curIdx={curIdx} isMoving={isMoving} movingStep={movingStep} movingTotal={movingTotal} />
       <SceneLighting activeCircle={activeCircle} players={players} curIdx={curIdx} />
       <Atmosphere activeCircle={activeCircle} />
@@ -1066,70 +1036,63 @@ const Scene3D = () => {
 };
 
 // ─── Hlavní komponenta ────────────────────────────────────────
-const GameBoard3D = () => {
-  const { size } = useDisplaySize();
-  const maxWidth = Math.round(600 * (size / 100));
-
-  return (
+const GameBoard3D = () => (
+  <div style={{
+    width: "100%", maxWidth: 600,
+    margin: "0 auto",
+    display: "flex", flexDirection: "column",
+  }}>
+    {/* 3D Canvas */}
     <div style={{
-      width: "100%",
-      maxWidth: maxWidth,
-      margin: "0 auto",
-      display: "flex",
-      flexDirection: "column",
+      position:      "relative",
+      width:         "100%",
+      paddingBottom: "90%",
+      borderRadius:  16,
+      overflow:      "hidden",
+      background:    "#03030a",
     }}>
-      {/* 3D Canvas */}
-      <div style={{
-        position:      "relative",
-        width:         "100%",
-        paddingBottom: "90%",
-        borderRadius:  16,
-        overflow:      "hidden",
-        background:    "transparent",
-      }}>
-        <div style={{ position: "absolute", inset: 0 }}>
-          <Canvas
-            camera={{ position: [0, 10, 9], fov: 50 }}
-            gl={{
-              antialias:        true,
-              alpha:            true,
-              powerPreference:  "high-performance",
-              outputColorSpace: "srgb",
-            }}
-            dpr={[1, 2]}
-          >
-            <Suspense fallback={null}>
-              <Scene3D />
-            </Suspense>
-          </Canvas>
-        </div>
+      <div style={{ position: "absolute", inset: 0 }}>
+        <Canvas
+          shadows
+          camera={{ position: [0, 10, 9], fov: 50 }}
+          gl={{
+            antialias:        true,
+            alpha:            false,
+            powerPreference:  "high-performance",
+            // Pro správný Bloom — linear color space
+            outputColorSpace: "srgb",
+          }}
+          dpr={[1, 2]}
+        >
+          <Scene3D />
+        </Canvas>
       </div>
-
-      {/* Legenda */}
-      <div style={{
-        display: "flex", flexWrap: "wrap",
-        gap: "5px 12px", justifyContent: "center",
-        padding: "8px 0 4px",
-      }}>
-        {[
-          { c: "#c0392b", l: "Negativní" },
-          { c: "#d4ac0d", l: "Dveře" },
-          { c: "#27ae60", l: "Studium/Modlitba" },
-          { c: "#2980b9", l: "Speciální" },
-        ].map((item) => (
-          <div key={item.l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: item.c }} />
-            <span style={{ fontSize: 10, color: "var(--color-text-secondary)" }}>
-              {item.l}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Kostka */}
-      <DiceRoller3D />
     </div>
-  );
-};
+
+    {/* Legenda */}
+    <div style={{
+      display: "flex", flexWrap: "wrap",
+      gap: "5px 12px", justifyContent: "center",
+      padding: "8px 0 4px",
+    }}>
+      {[
+        { c: "#c0392b", l: "Negativní" },
+        { c: "#d4ac0d", l: "Dveře" },
+        { c: "#27ae60", l: "Studium/Modlitba" },
+        { c: "#2980b9", l: "Speciální" },
+      ].map((item) => (
+        <div key={item.l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <div style={{ width: 7, height: 7, borderRadius: "50%", background: item.c }} />
+          <span style={{ fontSize: 10, color: "var(--color-text-secondary)" }}>
+            {item.l}
+          </span>
+        </div>
+      ))}
+    </div>
+
+    {/* Kostka */}
+    <DiceRoller3D />
+  </div>
+);
 
 export default GameBoard3D;
