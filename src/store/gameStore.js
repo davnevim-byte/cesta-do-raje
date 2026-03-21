@@ -209,6 +209,8 @@ export const useGameStore = create(
 
         const showOnboarding = !get().hasPlayedBefore;
 
+        const currentDeviceType = get().deviceType;
+        const currentDiceType   = get().diceType;
         set({
           ...initialState,
           gamePhase:     showOnboarding ? "onboarding" : "playing",
@@ -221,6 +223,8 @@ export const useGameStore = create(
           showOnboarding,
           hasPlayedBefore: true,
           turnLog: [],
+          deviceType: currentDeviceType,
+          diceType:   currentDiceType,
         });
 
         if (!showOnboarding) {
@@ -1013,6 +1017,8 @@ export const useGameStore = create(
         ...persisted,
         players: Array.isArray(persisted?.players) ? persisted.players : [],
         turnLog: Array.isArray(persisted?.turnLog) ? persisted.turnLog : [],
+        // deviceType se NIKDY nepřepisuje z persisted - vždy se nastavuje při startu
+        deviceType: current.deviceType,
       }),
       partialize: (state) => ({
         // Uložíme jen to co chceme zachovat při obnovení stránky
@@ -1025,6 +1031,7 @@ export const useGameStore = create(
         timerMinutes:    state.timerMinutes,
         timeRemaining:   state.timeRemaining,
         turnLog:         state.turnLog,
+        diceType:        state.diceType,
       }),
     }
   )
