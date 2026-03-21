@@ -437,8 +437,6 @@ const AVATAR_GLB_MAP = {
   AVATAR12: "/cesta-do-raje/models/character-female-f.glb",
 };
 
-// Preload všech modelů
-Object.values(AVATAR_GLB_MAP).forEach((url) => useGLTF.preload(url));
 
 // ─── Kenney Mini Character model ─────────────────────────────
 const KenneyCharacter = ({ avatarId, color, emotion, isActive, lArmRef, rArmRef, headRef }) => {
