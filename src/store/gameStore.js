@@ -15,7 +15,7 @@ import { persist } from "zustand/middleware";
 
 import { OUTER_TILES, INNER_TILES, getTileAtPosition, getRandomInstruction } from "../data/tiles";
 import { getRandomQuestion } from "../data/questions";
-import { getRandomScenario, getRandomDoorsScenario, fillScenarioNames } from "../data/scenarios";
+import { getRandomScenario, getRandomDoorsScenario, getRandomServiceScenario, getRandomCongregationScenario, fillScenarioNames } from "../data/scenarios";
 import { getRandomWildCard, fillWildCardNames, WILD_CARD_TRIGGER_CHANCE } from "../data/wildCards";
 import { createInitialFruitScore, addFruit, evaluateAllPlayers, calculateEndAwards } from "../data/fruitOfSpirit";
 
@@ -109,6 +109,21 @@ const initialState = {
   witnessingTimeRemaining: null,
   witnessingStarted: false,
 
+  // Služba (vnitřní kruh)
+  showService: false,
+  currentService: null,
+  serviceTimeRemaining: null,
+  serviceStarted: false,
+
+  // Sbor (vnitřní kruh)
+  showCongregation: false,
+  currentCongregation: null,
+  congregationTimeRemaining: null,
+  congregationStarted: false,
+
+  // Aktivita (vnitřní kruh)
+  showActivity: false,
+
   // Konec hry
   endResults: null,   // evaluateAllPlayers + calculateEndAwards
 
@@ -127,7 +142,9 @@ const initialState = {
 // ─────────────────────────────────────────────
 
 let timerInterval       = null;
-let witnessingInterval  = null;
+let witnessingInterval    = null;
+let serviceInterval       = null;
+let congregationInterval  = null;
 
 export const useGameStore = create(
   persist(
@@ -421,8 +438,29 @@ export const useGameStore = create(
             break;
           }
 
-          // Speciální políčko (shromáždění, služba, komentáře...)
+          // Speciální políčko — rozlišení dle tile.id
           case "special": {
+            const tileId = tile.id ?? "";
+            // Políčko Služba
+            if (tileId.startsWith("SLUZBA")) {
+              const raw      = getRandomServiceScenario();
+              const scenario = fillScenarioNames(raw, player.name, target.name);
+              get().startService(scenario);
+              break;
+            }
+            // Políčko Sbor
+            if (tileId.startsWith("SBOR")) {
+              const raw      = getRandomCongregationScenario();
+              const scenario = fillScenarioNames(raw, player.name, target.name);
+              get().startCongregation(scenario);
+              break;
+            }
+            // Políčko Aktivita
+            if (tileId.startsWith("AKTIVITA")) {
+              get().showActivityModal();
+              break;
+            }
+            // Ostatní speciální (Stavby, Přihláška, Ovoce ducha...)
             get()._showTileInstruction(tile, playerIndex);
             break;
           }
@@ -510,6 +548,88 @@ export const useGameStore = create(
         });
 
         get()._nextPlayer();
+      },
+
+      // ── Služba ──────────────────────────────────────────────
+      startService: (scenario) => {
+        clearInterval(serviceInterval);
+        set({ showService: true, currentService: scenario, serviceTimeRemaining: 210, serviceStarted: false });
+      },
+
+      startServiceTimer: () => {
+        set({ serviceStarted: true });
+        clearInterval(serviceInterval);
+        serviceInterval = setInterval(() => {
+          const { serviceTimeRemaining } = get();
+          if (!serviceTimeRemaining || serviceTimeRemaining <= 0) {
+            clearInterval(serviceInterval);
+            get().answerService(false);
+          } else {
+            set({ serviceTimeRemaining: serviceTimeRemaining - 1 });
+          }
+        }, 1000);
+      },
+
+      answerService: (success) => {
+        clearInterval(serviceInterval);
+        set({ showService: false, currentService: null, serviceTimeRemaining: null, serviceStarted: false });
+        if (success) {
+          const { players, currentPlayerIndex } = get();
+          const updated = [...players];
+          updated[currentPlayerIndex] = { ...updated[currentPlayerIndex], score: (updated[currentPlayerIndex].score ?? 0) + 20 };
+          set({ players: updated });
+        }
+        get().endTurn();
+      },
+
+      // ── Sbor ────────────────────────────────────────────────
+      startCongregation: (scenario) => {
+        clearInterval(congregationInterval);
+        set({ showCongregation: true, currentCongregation: scenario, congregationTimeRemaining: 120, congregationStarted: false });
+      },
+
+      startCongregationTimer: () => {
+        const { currentCongregation } = get();
+        const isStrazniVez = currentCongregation?.category === "strážní věž";
+        set({ congregationStarted: true });
+        clearInterval(congregationInterval);
+        congregationInterval = setInterval(() => {
+          const { congregationTimeRemaining } = get();
+          if (!congregationTimeRemaining || congregationTimeRemaining <= 0) {
+            clearInterval(congregationInterval);
+            get().answerCongregation(false);
+          } else {
+            set({ congregationTimeRemaining: congregationTimeRemaining - 1 });
+          }
+        }, 1000);
+      },
+
+      answerCongregation: (success) => {
+        clearInterval(congregationInterval);
+        set({ showCongregation: false, currentCongregation: null, congregationTimeRemaining: null, congregationStarted: false });
+        if (success) {
+          const { players, currentPlayerIndex } = get();
+          const updated = [...players];
+          updated[currentPlayerIndex] = { ...updated[currentPlayerIndex], score: (updated[currentPlayerIndex].score ?? 0) + 10 };
+          set({ players: updated });
+        }
+        get().endTurn();
+      },
+
+      // ── Aktivita ────────────────────────────────────────────
+      showActivityModal: () => {
+        set({ showActivity: true });
+      },
+
+      answerActivity: (success) => {
+        set({ showActivity: false });
+        if (success) {
+          const { players, currentPlayerIndex } = get();
+          const updated = [...players];
+          updated[currentPlayerIndex] = { ...updated[currentPlayerIndex], score: (updated[currentPlayerIndex].score ?? 0) + 10 };
+          set({ players: updated });
+        }
+        get().endTurn();
       },
 
       startWitnessingTimer: () => {
@@ -811,8 +931,8 @@ export const useGameStore = create(
       },
 
       isModalOpen: () => {
-        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding } = get();
-        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding;
+        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity } = get();
+        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity;
       },
     }),
 
