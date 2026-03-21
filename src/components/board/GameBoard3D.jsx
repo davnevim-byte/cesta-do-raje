@@ -285,15 +285,7 @@ const BoardBase = () => (
       />
     </mesh>
 
-    {/* Dělicí prstenec — zlatý */}
-    <mesh position={[0, -0.05, 0]}>
-      <torusGeometry args={[INNER_R + 0.45, 0.04, 8, 64]} />
-      <meshStandardMaterial
-        color="#d4ac0d"
-        emissive="#d4ac0d"
-        emissiveIntensity={0.4}
-      />
-    </mesh>
+{/* Dělicí prstenec odstraněn */}
 
 
   </group>
@@ -344,20 +336,7 @@ const ParadiseCenter = () => {
         position={[0, 0.5, 0]}
       />
 
-      {/* Text RÁJ */}
-      <Billboard>
-        <Text
-          position={[0, 2.2, 0]}
-          fontSize={0.32}
-          color="#9FE1CB"
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.02}
-          outlineColor="#041a0c"
-        >
-          RÁJ
-        </Text>
-      </Billboard>
+{/* Text RÁJ odstraněn */}
     </group>
   );
 };
