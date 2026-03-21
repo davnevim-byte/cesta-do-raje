@@ -84,6 +84,7 @@ const initialState = {
 
   // Kostka
   diceRoll: null,
+  diceType: "virtual",
   isRolling: false,
 
   // Animace pohybu políčko po políčku
@@ -251,6 +252,16 @@ export const useGameStore = create(
         setTimeout(() => {
           set({ isRolling: false });
         }, 600);
+      },
+
+      rollDiceWithValue: (value) => {
+        const { diceRoll } = get();
+        if (diceRoll !== null) return;
+        set({ diceRoll: value, isRolling: false });
+      },
+
+      setDiceType: (type) => {
+        set({ diceType: type });
       },
 
       confirmMove: () => {
