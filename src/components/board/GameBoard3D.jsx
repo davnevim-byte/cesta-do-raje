@@ -446,6 +446,10 @@ const KenneyCharacter = ({ avatarId, color, emotion, isActive, lArmRef, rArmRef,
   // Klon scény aby každý hráč měl vlastní instanci
   const cloned = useMemo(() => {
     const c = scene.clone(true);
+    // Resetuj transform clonu - nechceme zdědit worldSpace pozici
+    c.position.set(0, 0, 0);
+    c.rotation.set(0, 0, 0);
+    c.scale.set(1, 1, 1);
     // Obarvi model barvou hráče (emissive tint)
     c.traverse((node) => {
       if (node.isMesh && node.material) {
