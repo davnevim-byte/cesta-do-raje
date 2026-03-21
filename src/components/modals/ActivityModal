@@ -1,0 +1,289 @@
+// ============================================================
+//  ActivityModal — políčko Aktivita (vnitřní kruh)
+//  Pantomima / Popisování / Malování biblické postavy/situace
+// ============================================================
+
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useGameStore } from "../../store/gameStore";
+import { useSound } from "../../hooks/useSound";
+
+// ─── Témata aktivit ──────────────────────────────────────────
+const ACTIVITY_TOPICS = [
+  // Postavy
+  { type: "postava", name: "Noe", hint: "Stavěl archu před potopou" },
+  { type: "postava", name: "David", hint: "Porazil Goliáše prakem" },
+  { type: "postava", name: "Josef", hint: "Měl pestrobarevný plášť" },
+  { type: "postava", name: "Jonáš", hint: "Byl polknut velkou rybou" },
+  { type: "postava", name: "Mojžíš", hint: "Rozdělil Rudé moře" },
+  { type: "postava", name: "Ježíš", hint: "Chodil po vodě" },
+  { type: "postava", name: "Šalamoun", hint: "Byl nejchytřejší král" },
+  { type: "postava", name: "Ester", hint: "Zachránila svůj lid" },
+  { type: "postava", name: "Eliáš", hint: "Odletěl na ohnivém voze" },
+  { type: "postava", name: "Rut", hint: "Zůstala věrná Naomi" },
+  // Situace
+  { type: "situace", name: "Křest", hint: "Vstup do vody a ponoření" },
+  { type: "situace", name: "Modlitba", hint: "Sepjaté ruce, obrácení k nebi" },
+  { type: "situace", name: "Kázání u dveří", hint: "Klepe se na dveře s Biblí" },
+  { type: "situace", name: "Budování archy", hint: "Tesání dřeva, velká loď" },
+  { type: "situace", name: "Daniel ve lví jámě", hint: "Obklopen lvy, klidný" },
+  { type: "situace", name: "Stvoření světa", hint: "Světlo, tma, zvířata, člověk" },
+  { type: "situace", name: "Poslední večeře", hint: "Chléb, víno, stůl s dvanácti" },
+  { type: "situace", name: "Zázrak s chlebem a rybami", hint: "Pět chlebů, dva ryby" },
+];
+
+// ─── Styly aktivity ───────────────────────────────────────────
+const ACTIVITY_STYLES = [
+  { id: "pantomima", name: "Pantomima", emoji: "🤸", desc: "Bez slov — jen pohybem a gesty", color: "#7B3FA5" },
+  { id: "popisovani", name: "Popisování", emoji: "💬", desc: "Slovně — bez jména postavy/situace", color: "#378ADD" },
+  { id: "malovani", name: "Malování", emoji: "🎨", desc: "Nakresli na papír — ostatní hádají", color: "#D4537E" },
+];
+
+const ACTIVITY_TIME = 60;
+
+const ActivityModal = () => {
+  const showActivity    = useGameStore((s) => s.showActivity);
+  const answerActivity  = useGameStore((s) => s.answerActivity);
+  const { sounds }      = useSound();
+
+  const [phase, setPhase]       = useState("draw"); // draw | play | result
+  const [style, setStyle]       = useState(null);
+  const [topic, setTopic]       = useState(null);
+  const [timeLeft, setTimeLeft] = useState(ACTIVITY_TIME);
+  const [started, setStarted]   = useState(false);
+  const timerRef = useRef(null);
+
+  // Náhodně vylosuj styl a téma při otevření
+  useEffect(() => {
+    if (showActivity) {
+      const randomStyle = ACTIVITY_STYLES[Math.floor(Math.random() * ACTIVITY_STYLES.length)];
+      const randomTopic = ACTIVITY_TOPICS[Math.floor(Math.random() * ACTIVITY_TOPICS.length)];
+      setStyle(randomStyle);
+      setTopic(randomTopic);
+      setPhase("draw");
+      setTimeLeft(ACTIVITY_TIME);
+      setStarted(false);
+    }
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [showActivity]);
+
+  const handleStart = () => {
+    setStarted(true);
+    setPhase("play");
+    timerRef.current = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) {
+          clearInterval(timerRef.current);
+          setPhase("result");
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+  };
+
+  const handleResult = (success) => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (success) sounds.witnessSuccess?.();
+    answerActivity(success);
+    setPhase("draw");
+    setStarted(false);
+  };
+
+  if (!showActivity) return null;
+
+  const urgent = timeLeft <= 15;
+  const timerColor = urgent ? "#E24B4A" : timeLeft <= 30 ? "#EF9F27" : style?.color ?? "#7B3FA5";
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="activity-overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        style={{
+          position: "fixed", inset: 0,
+          background: "rgba(0,0,0,0.92)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 100, padding: "16px",
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.88 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.92 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{
+            width: "100%", maxWidth: 460,
+            maxHeight: "90dvh",
+            background: "#0f0a1a",
+            border: `1.5px solid ${style?.color ?? "#7B3FA5"}`,
+            borderRadius: 16,
+            overflow: "hidden",
+            display: "flex", flexDirection: "column",
+          }}
+        >
+          {/* Header */}
+          <div style={{
+            background: `${style?.color ?? "#7B3FA5"}18`,
+            padding: "14px 20px",
+            borderBottom: `1px solid ${style?.color ?? "#7B3FA5"}33`,
+            display: "flex", alignItems: "center",
+            justifyContent: "space-between",
+            flexShrink: 0,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 28 }}>{style?.emoji ?? "🎭"}</span>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>
+                  Aktivita — {style?.name}
+                </div>
+                <div style={{ fontSize: 11, color: "#666" }}>
+                  {style?.desc}
+                </div>
+              </div>
+            </div>
+
+            {/* Timer nebo START */}
+            {phase === "play" && (
+              <motion.div
+                animate={urgent ? { scale: [1, 1.1, 1] } : {}}
+                transition={{ duration: 0.5, repeat: Infinity }}
+                style={{
+                  fontSize: 28, fontWeight: 700,
+                  color: timerColor, fontFamily: "monospace",
+                  minWidth: 50, textAlign: "center",
+                }}
+              >
+                {timeLeft}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Obsah */}
+          <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
+
+            {/* Téma — velká karta */}
+            <div style={{
+              background: `${style?.color ?? "#7B3FA5"}15`,
+              border: `2px solid ${style?.color ?? "#7B3FA5"}40`,
+              borderRadius: 14, padding: "20px",
+              textAlign: "center",
+            }}>
+              <div style={{ fontSize: 11, color: "#666", marginBottom: 8, fontWeight: 600, letterSpacing: 1 }}>
+                {topic?.type === "postava" ? "👤 BIBLICKÁ POSTAVA" : "🎬 BIBLICKÁ SITUACE"}
+              </div>
+              <div style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+                {topic?.name}
+              </div>
+              <div style={{ fontSize: 13, color: "#888", fontStyle: "italic" }}>
+                Nápověda: {topic?.hint}
+              </div>
+            </div>
+
+            {/* Instrukce */}
+            <div style={{
+              background: "rgba(255,255,255,0.03)",
+              border: `1px solid ${style?.color ?? "#7B3FA5"}30`,
+              borderRadius: 10, padding: "12px 14px",
+              fontSize: 13, color: "#ccc", lineHeight: 1.6,
+            }}>
+              {style?.id === "pantomima" && (
+                <>
+                  <strong style={{ color: style.color }}>Pantomima:</strong> Předváděj <strong>{topic?.name}</strong> pouze pohybem a gesty — žádná slova, zvuky ani ukazování na věci v místnosti. Ostatní hádají!
+                </>
+              )}
+              {style?.id === "popisovani" && (
+                <>
+                  <strong style={{ color: style.color }}>Popisování:</strong> Vysvětli <strong>{topic?.name}</strong> slovy — ale nesmíš říct jméno postavy ani situace. Ostatní hádají!
+                </>
+              )}
+              {style?.id === "malovani" && (
+                <>
+                  <strong style={{ color: style.color }}>Malování:</strong> Nakresli <strong>{topic?.name}</strong> na papír — bez slov a písmen. Ostatní hádají!
+                </>
+              )}
+            </div>
+
+            {/* Fáze: Čekání na START */}
+            {phase === "draw" && (
+              <motion.button
+                onClick={handleStart}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                animate={{ scale: [1, 1.03, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+                style={{
+                  padding: "14px",
+                  background: style?.color ?? "#7B3FA5",
+                  border: "none", borderRadius: 12,
+                  color: "#fff", fontSize: 16, fontWeight: 700,
+                  cursor: "pointer", fontFamily: "inherit",
+                  boxShadow: `0 0 20px ${style?.color ?? "#7B3FA5"}60`,
+                }}
+              >
+                ▶ START — {ACTIVITY_TIME}s
+              </motion.button>
+            )}
+
+            {/* Fáze: Hra probíhá */}
+            {phase === "play" && (
+              <div style={{
+                padding: "12px",
+                background: "rgba(255,255,255,0.04)",
+                borderRadius: 10, textAlign: "center",
+                fontSize: 13, color: "#666",
+              }}>
+                ⏱ Čas běží... ostatní hádají!
+              </div>
+            )}
+
+            {/* Fáze: Výsledek (čas vypršel nebo manuální ukončení) */}
+            {(phase === "result" || phase === "play") && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {phase === "result" && (
+                  <div style={{ fontSize: 13, color: "#666", textAlign: "center" }}>
+                    Uhádli ostatní hráči správnou odpověď?
+                  </div>
+                )}
+                <div style={{ display: "flex", gap: 10 }}>
+                  <motion.button
+                    onClick={() => handleResult(true)}
+                    whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}
+                    style={{
+                      flex: 1, padding: "13px",
+                      background: "#0a2a1a",
+                      border: "1.5px solid #1D9E75",
+                      borderRadius: 10, color: "#9FE1CB",
+                      fontSize: 14, fontWeight: 600,
+                      cursor: "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    ✓ Uhádli!
+                  </motion.button>
+                  <motion.button
+                    onClick={() => handleResult(false)}
+                    whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }}
+                    style={{
+                      flex: 1, padding: "13px",
+                      background: "#1a0a0a",
+                      border: "1.5px solid #E24B4A",
+                      borderRadius: 10, color: "#F09595",
+                      fontSize: 14, fontWeight: 600,
+                      cursor: "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    ✗ Neuhádli
+                  </motion.button>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+export default ActivityModal;
