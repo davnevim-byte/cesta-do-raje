@@ -28,6 +28,7 @@ export const GameScreen = () => {
   const players    = useGameStore((s) => s.players) ?? [];
   const curIdx     = useGameStore((s) => s.currentPlayerIndex);
 
+  const graceCards = useGameStore((s) => s.graceCards ?? 0);
   const { switchToZone, init, stop } = useMusic();
   const { sounds } = useSound();
 
@@ -124,6 +125,17 @@ export const GameScreen = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {graceCards > 0 && (
+            <div style={{
+              display: "flex", alignItems: "center", gap: 4,
+              padding: "3px 8px",
+              background: "rgba(212,172,13,0.15)",
+              border: "1px solid rgba(212,172,13,0.3)",
+              borderRadius: 10, fontSize: 11, color: "#FAC775",
+            }}>
+              🌿 {graceCards}x
+            </div>
+          )}
           <Timer />
           <button
             onClick={() => {
