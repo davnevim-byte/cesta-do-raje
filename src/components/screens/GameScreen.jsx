@@ -19,6 +19,7 @@ import { DisplaySizeControl } from "../ui/DisplaySizeControl";
 import ServiceModal from "../modals/ServiceModal";
 import CongregationModal from "../modals/CongregationModal";
 import ActivityModal from "../modals/ActivityModal";
+import GraceCardModal from "../modals/GraceCardModal";
 import { useSound } from "../../hooks/useSound";
 
 export const GameScreen = () => {
@@ -161,6 +162,7 @@ export const GameScreen = () => {
       <ServiceModal />
       <CongregationModal />
       <ActivityModal />
+      <GraceCardModal />
 
       {/* NASTAVENÍ VELIKOSTI */}
       <DisplaySizeControl />
