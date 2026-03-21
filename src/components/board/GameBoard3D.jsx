@@ -421,6 +421,57 @@ const ParadiseCenter = () => {
   );
 };
 
+// ─── Mapování avatarů na GLB soubory ─────────────────────────
+const AVATAR_GLB_MAP = {
+  AVATAR01: "/cesta-do-raje/models/character-male-a.glb",
+  AVATAR02: "/cesta-do-raje/models/character-female-a.glb",
+  AVATAR03: "/cesta-do-raje/models/character-male-b.glb",
+  AVATAR04: "/cesta-do-raje/models/character-female-b.glb",
+  AVATAR05: "/cesta-do-raje/models/character-male-c.glb",
+  AVATAR06: "/cesta-do-raje/models/character-female-c.glb",
+  AVATAR07: "/cesta-do-raje/models/character-male-d.glb",
+  AVATAR08: "/cesta-do-raje/models/character-female-d.glb",
+  AVATAR09: "/cesta-do-raje/models/character-male-e.glb",
+  AVATAR10: "/cesta-do-raje/models/character-female-e.glb",
+  AVATAR11: "/cesta-do-raje/models/character-male-f.glb",
+  AVATAR12: "/cesta-do-raje/models/character-female-f.glb",
+};
+
+// Preload všech modelů
+Object.values(AVATAR_GLB_MAP).forEach((url) => useGLTF.preload(url));
+
+// ─── Kenney Mini Character model ─────────────────────────────
+const KenneyCharacter = ({ avatarId, color, emotion, isActive, lArmRef, rArmRef, headRef }) => {
+  const url = AVATAR_GLB_MAP[avatarId] ?? AVATAR_GLB_MAP.AVATAR01;
+  const { scene } = useGLTF(url);
+
+  // Klon scény aby každý hráč měl vlastní instanci
+  const cloned = useMemo(() => {
+    const c = scene.clone(true);
+    // Obarvi model barvou hráče (emissive tint)
+    c.traverse((node) => {
+      if (node.isMesh && node.material) {
+        node.material = node.material.clone();
+        node.material.emissive = new THREE.Color(color);
+        node.material.emissiveIntensity = isActive ? 0.25 : 0.06;
+      }
+    });
+    return c;
+  }, [scene, color, isActive]);
+
+  // Kenney mini chars jsou velké ~1.8 jednotek — zmenšíme
+  const scale = 0.45;
+
+  return (
+    <primitive
+      object={cloned}
+      scale={[scale, scale, scale]}
+      position={[0, 0, 0]}
+      rotation={[0, Math.PI, 0]}
+    />
+  );
+};
+
 // ─── 3D figurka hráče ─────────────────────────────────────────
 // Anatomie: základna → tělo → ramena → krk → hlava → výraz
 // Emoce: idle dýchání, skok při pohybu, třes při negativním,
@@ -524,94 +575,28 @@ const PlayerFigurine = ({
 
       {/* Celé tělo — animovaná skupina */}
       <group ref={rootRef}>
-        <group ref={bodyRef} position={[0, 0.05, 0]}>
+        <group ref={bodyRef} position={[0, 0, 0]}>
 
-          {/* Základna / boty */}
-          <mesh position={[0, 0, 0]}>
-            <cylinderGeometry args={[0.13, 0.15, 0.12, 10]} />
-            <meshStandardMaterial color="#111" roughness={0.8} />
-          </mesh>
-
-          {/* Nohy */}
-          <mesh position={[-0.07, 0.22, 0]}>
-            <cylinderGeometry args={[0.055, 0.065, 0.26, 8]} />
-            <meshStandardMaterial color={darkColor} roughness={0.65} metalness={0.05}
-              emissive={color} emissiveIntensity={emissiveInt * 0.5} />
-          </mesh>
-          <mesh position={[0.07, 0.22, 0]}>
-            <cylinderGeometry args={[0.055, 0.065, 0.26, 8]} />
-            <meshStandardMaterial color={darkColor} roughness={0.65} metalness={0.05}
-              emissive={color} emissiveIntensity={emissiveInt * 0.5} />
-          </mesh>
-
-          {/* Trup */}
-          <mesh position={[0, 0.48, 0]}>
-            <cylinderGeometry args={[0.14, 0.13, 0.34, 10]} />
-            <meshStandardMaterial color={color} roughness={0.55} metalness={0.12}
-              emissive={color} emissiveIntensity={emissiveInt} />
-          </mesh>
-
-          {/* Levé rameno + paže */}
-          <group ref={lArmRef} position={[-0.17, 0.58, 0]} rotation={[0, 0, -0.25]}>
-            <mesh position={[0, -0.1, 0]}>
-              <cylinderGeometry args={[0.045, 0.05, 0.22, 8]} />
-              <meshStandardMaterial color={color} roughness={0.6}
-                emissive={color} emissiveIntensity={emissiveInt * 0.6} />
+          {/* Kenney Mini Character GLB model */}
+          <Suspense fallback={
+            <mesh position={[0, 0.4, 0]}>
+              <capsuleGeometry args={[0.12, 0.5, 4, 8]} />
+              <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.3} />
             </mesh>
-          </group>
+          }>
+            <KenneyCharacter
+              avatarId={player.avatarId}
+              color={color}
+              emotion={emotion}
+              isActive={isActive}
+              lArmRef={lArmRef}
+              rArmRef={rArmRef}
+              headRef={headRef}
+            />
+          </Suspense>
 
-          {/* Pravé rameno + paže */}
-          <group ref={rArmRef} position={[0.17, 0.58, 0]} rotation={[0, 0, 0.25]}>
-            <mesh position={[0, -0.1, 0]}>
-              <cylinderGeometry args={[0.045, 0.05, 0.22, 8]} />
-              <meshStandardMaterial color={color} roughness={0.6}
-                emissive={color} emissiveIntensity={emissiveInt * 0.6} />
-            </mesh>
-          </group>
-
-          {/* Krk */}
-          <mesh position={[0, 0.7, 0]}>
-            <cylinderGeometry args={[0.055, 0.07, 0.1, 8]} />
-            <meshStandardMaterial color="#d4a574" roughness={0.7} />
-          </mesh>
-
-          {/* Hlava */}
-          <group ref={headRef} position={[0, 0.84, 0]}>
-            <mesh>
-              <sphereGeometry args={[0.2, 14, 14]} />
-              <meshStandardMaterial color="#e8b89a" roughness={0.65}
-                emissive={color} emissiveIntensity={emissiveInt * 0.25} />
-            </mesh>
-
-            {/* Oči — malé tmavé koule */}
-            <mesh position={[-0.075, 0.04, 0.17]}>
-              <sphereGeometry args={[0.028, 6, 6]} />
-              <meshBasicMaterial color="#1a0800" />
-            </mesh>
-            <mesh position={[0.075, 0.04, 0.17]}>
-              <sphereGeometry args={[0.028, 6, 6]} />
-              <meshBasicMaterial color="#1a0800" />
-            </mesh>
-
-            {/* Výraz dle emoce */}
-            {emotion === "cheer" && (
-              <>
-                {/* Radostný úsměv — klenutý cylinder */}
-                <mesh position={[0, -0.05, 0.18]} rotation={[0, 0, Math.PI]}>
-                  <torusGeometry args={[0.055, 0.012, 6, 10, Math.PI]} />
-                  <meshBasicMaterial color="#c08060" />
-                </mesh>
-              </>
-            )}
-            {emotion === "shake" && (
-              <>
-                {/* Smutný výraz */}
-                <mesh position={[0, -0.06, 0.18]}>
-                  <torusGeometry args={[0.055, 0.012, 6, 10, Math.PI]} />
-                  <meshBasicMaterial color="#c08060" />
-                </mesh>
-              </>
-            )}
+          {/* Hlava - pro jméno billboard */}
+          <group ref={headRef} position={[0, 0.85, 0]}>
 
             {/* Jméno jako billboard */}
             <Billboard follow lockX={false} lockY={true} lockZ={false}>
