@@ -131,6 +131,13 @@ const initialState = {
   // Typ zařízení — mobile / tablet / tv
   deviceType: "mobile",
 
+  // Rychlá hra pro děti
+  quickMode: false,
+
+  // Bonus kolo
+  showBonusRound: false,
+  allPassedStart: false,
+
   // Konec hry
   endResults: null,   // evaluateAllPlayers + calculateEndAwards
 
@@ -211,6 +218,7 @@ export const useGameStore = create(
 
         const currentDeviceType = get().deviceType;
         const currentDiceType   = get().diceType;
+        const currentQuickMode  = get().quickMode;
         set({
           ...initialState,
           gamePhase:     showOnboarding ? "onboarding" : "playing",
@@ -225,6 +233,7 @@ export const useGameStore = create(
           turnLog: [],
           deviceType: currentDeviceType,
           diceType:   currentDiceType,
+          quickMode:  currentQuickMode,
         });
 
         if (!showOnboarding) {
@@ -374,10 +383,13 @@ export const useGameStore = create(
           startPassCount: passedStart ? (player.startPassCount ?? 0) + 1 : (player.startPassCount ?? 0),
         };
 
-        set({
-          players:    updated,
-          movingStep: stepsDone + 1,
-        });
+        // Zkontroluj jestli vsichni prosli Startem - bonus kolo
+        const allPassed2 = updated.every((p) => (p.startPassCount ?? 0) >= 1);
+        if (allPassed2 && !get().allPassedStart) {
+          set({ players: updated, movingStep: stepsDone + 1, showBonusRound: true, allPassedStart: true });
+        } else {
+          set({ players: updated, movingStep: stepsDone + 1 });
+        }
 
         // Zpomalení posledního kroku — dramatická pauza před přistáním
         const isLastStep = stepsDone + 1 >= totalSteps;
@@ -922,6 +934,14 @@ export const useGameStore = create(
         set({ deviceType: type });
       },
 
+      setQuickMode: (val) => {
+        set({ quickMode: val });
+      },
+
+      closeBonusRound: () => {
+        set({ showBonusRound: false });
+      },
+
       endTurn: () => {
         setTimeout(() => get()._nextPlayer(), 800);
       },
@@ -1022,8 +1042,8 @@ export const useGameStore = create(
       },
 
       isModalOpen: () => {
-        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity, showGraceCard } = get();
-        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity || showGraceCard;
+        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity, showGraceCard, showBonusRound } = get();
+        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity || showGraceCard || showBonusRound;
       },
     }),
 
