@@ -516,7 +516,7 @@ export const INNER_TILES = [
     instructions: [
       "Biblická otázka! Moderátor položí otázku dle zvolené obtížnosti. Správná odpověď = postup o 1 políčko vpřed.",
       "Hra na verše: jeden hráč řekne první část verše, ty ho dokončíš.",
-      "Jak ti konkrétně pomohlo studium Strážní věže v uplynulém měsíci?",
+      "Jak ti konkrétně pomohlo studium Strážné věže v uplynulém měsíci?",
     ],
     penalty: null,
     reward: { type: "moveForward", spaces: 1, description: "Správná odpověď — posun o 1 políčko vpřed!" },
@@ -648,7 +648,7 @@ export const INNER_TILES = [
   },
   {
     id: "STAVBY",
-    name: "Stavby Království síní",
+    name: "Výstavba sálů Království",
     type: "special",
     image: "special.png",
     color: "#185FA5",
@@ -657,7 +657,7 @@ export const INNER_TILES = [
     instructions: [
       "Jak bys mohl přispět na stavbu nebo údržbu Království síně? Vyjmenuj tři konkrétní způsoby. Jehova miluje ochotného dárce! (2. Korinťanům 9:7)",
       "Co je LDC (Local Design/Construction)? Jak organizace JW buduje Království síně po celém světě?",
-      "Přečti Haggaj 1:7–8. Jehova vyzval lid aby obnovil jeho dům. Jak nás to inspiruje k péči o naši Království síň?",
+      "Přečti Haggaj 1:7–8. Jehova vyzval lid aby obnovil jeho dům. Jak nás to inspiruje k péči o naši sál Království?",
     ],
     penalty: null,
     reward: { type: "moveForward", spaces: 1, description: "Ochotný dárce — posun o 1 políčko vpřed!" },
