@@ -573,5 +573,5 @@ export const SCENARIO_CATEGORIES = [
   "povzbuzení ve sboru",
   "speciální situace",
   "strážní věž",
-  "sborový život`,
+  "sborový život",
 ];
