@@ -112,7 +112,7 @@ const LightBeams = () => (
     viewBox="0 0 400 400"
     preserveAspectRatio="xMidYMid slice"
   >
-    {Array.from({ length: 12 }, (_, i) => {
+    {Array.from({ length: 16 }, (_, i) => {
       const a  = (i / 12) * Math.PI * 2;
       const x1 = 200 + 185 * Math.cos(a);
       const y1 = 200 + 185 * Math.sin(a);
@@ -121,7 +121,7 @@ const LightBeams = () => (
           key={i}
           x1={x1} y1={y1} x2={200} y2={200}
           stroke="#f5d76e"
-          strokeWidth={1.5}
+          strokeWidth={2.5}
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 0.55, 0] }}
           transition={{ duration: 1.4, delay: i * 0.06, ease: "easeOut" }}
@@ -148,8 +148,8 @@ const InnerCircleTransition = ({ player, onDone }) => {
 
   useEffect(() => {
     const t1 = setTimeout(() => setShowContent(true), 500);
-    const t2 = setTimeout(() => setVisible(false), 3400);
-    const t3 = setTimeout(() => onDone?.(), 4000);
+    const t2 = setTimeout(() => setVisible(false), 4500);
+    const t3 = setTimeout(() => onDone?.(), 5200);
     return () => [t1, t2, t3].forEach(clearTimeout);
   }, []);
 
@@ -176,17 +176,40 @@ const InnerCircleTransition = ({ player, onDone }) => {
           {/* Světelná exploze */}
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [0, 3.5, 2.2], opacity: [0, 0.55, 0.25] }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
+            animate={{ scale: [0, 4.5, 3.0], opacity: [0, 0.75, 0.35] }}
+            transition={{ duration: 1.4, ease: "easeOut" }}
             style={{
               position:     "absolute",
-              width:        280, height: 280,
+              width:        320, height: 320,
               borderRadius: "50%",
-              background:   "radial-gradient(circle, rgba(245,215,110,0.55) 0%, rgba(29,158,117,0.2) 45%, transparent 70%)",
+              background:   "radial-gradient(circle, rgba(245,215,110,0.7) 0%, rgba(29,158,117,0.35) 40%, rgba(159,225,203,0.1) 65%, transparent 75%)",
               pointerEvents:"none",
             }}
           />
 
+          {/* Pulsujici zlaty kruh */}
+          <motion.div
+            animate={{ scale: [0, 1.5, 2.5], opacity: [0, 0.6, 0] }}
+            transition={{ duration: 2.0, ease: "easeOut", delay: 0.3 }}
+            style={{
+              position: "absolute",
+              width: 200, height: 200,
+              borderRadius: "50%",
+              border: "3px solid #f5d76e",
+              pointerEvents: "none",
+            }}
+          />
+          <motion.div
+            animate={{ scale: [0, 1.8, 3.2], opacity: [0, 0.4, 0] }}
+            transition={{ duration: 2.4, ease: "easeOut", delay: 0.5 }}
+            style={{
+              position: "absolute",
+              width: 200, height: 200,
+              borderRadius: "50%",
+              border: "2px solid #9FE1CB",
+              pointerEvents: "none",
+            }}
+          />
           <LightBeams />
           <GoldConfetti />
 
@@ -217,14 +240,14 @@ const InnerCircleTransition = ({ player, onDone }) => {
                     transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                     style={{
                       position:     "relative",
-                      width:        88, height: 88,
+                      width:        100, height: 100,
                       borderRadius: "50%",
-                      border:       `4px solid ${color}`,
+                      border:       `5px solid ${color}`,
                       overflow:     "hidden",
-                      boxShadow:    `0 0 36px ${color}88, 0 0 70px rgba(245,215,110,0.25)`,
+                      boxShadow:    `0 0 50px ${color}aa, 0 0 90px rgba(245,215,110,0.4), 0 0 20px rgba(245,215,110,0.6)`,
                     }}
                   >
-                    <AvatarC size={88} />
+                    <AvatarC size={100} />
 
                     {/* Hvězda nad avatarem */}
                     <motion.div
@@ -274,7 +297,7 @@ const InnerCircleTransition = ({ player, onDone }) => {
                     transition={{ delay: 0.8 }}
                     style={{ fontSize: 13, color: "#5DCAA5", fontStyle: "italic", maxWidth: 270 }}
                   >
-                    „Buďte horliví v konání dobra"
+                    "Nezapomeňte na laskavost vůči cizím — tak totiž někteří nevědomky pohostili anděly"
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -282,7 +305,7 @@ const InnerCircleTransition = ({ player, onDone }) => {
                     transition={{ delay: 1.0 }}
                     style={{ fontSize: 10, color: "#0F6E56", marginTop: 4, letterSpacing: 1 }}
                   >
-                    Římanům 12:11 · jw.org
+                    Hebrejum 13:1-2 · jw.org
                   </motion.div>
                 </motion.div>
 
