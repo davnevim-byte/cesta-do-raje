@@ -31,14 +31,25 @@ const PLAYER_COLORS = [
 
 // Barvy políček
 const TILE_COLORS = {
-  negative: { top: "#2a0505", emissive: "#c0392b", emissiveInt: 0.2,  height: 0.14, rim: "#8b1a1a" },
-  doors:    { top: "#2a1e04", emissive: "#d4ac0d", emissiveInt: 0.35, height: 0.22, rim: "#b8960c" },
-  start:    { top: "#062a14", emissive: "#1D9E75", emissiveInt: 0.28, height: 0.20, rim: "#0f6e56" },
-  empty:    { top: "#0d0d14", emissive: "#333344", emissiveInt: 0.02, height: 0.10, rim: "#1a1a2a" },
-  entry:    { top: "#2a1e04", emissive: "#EF9F27", emissiveInt: 0.40, height: 0.26, rim: "#c47f0a" },
-  study:    { top: "#062014", emissive: "#27ae60", emissiveInt: 0.22, height: 0.18, rim: "#1a7a40" },
-  prayer:   { top: "#041408", emissive: "#1D9E75", emissiveInt: 0.20, height: 0.16, rim: "#0a5a3a" },
-  special:  { top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.25, height: 0.18, rim: "#1a5a8a" },
+  negative:    { top: "#2a0505", emissive: "#c0392b", emissiveInt: 0.2,  height: 0.14, rim: "#8b1a1a" },
+  doors:       { top: "#2a1e04", emissive: "#d4ac0d", emissiveInt: 0.35, height: 0.22, rim: "#b8960c" },
+  start:       { top: "#062a14", emissive: "#1D9E75", emissiveInt: 0.28, height: 0.20, rim: "#0f6e56" },
+  empty:       { top: "#0d0d14", emissive: "#333344", emissiveInt: 0.02, height: 0.10, rim: "#1a1a2a" },
+  entry:       { top: "#2a1e04", emissive: "#EF9F27", emissiveInt: 0.40, height: 0.26, rim: "#c47f0a" },
+  study:       { top: "#062014", emissive: "#27ae60", emissiveInt: 0.22, height: 0.18, rim: "#1a7a40" },
+  prayer:      { top: "#041408", emissive: "#1D9E75", emissiveInt: 0.20, height: 0.16, rim: "#0a5a3a" },
+  special:     { top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.25, height: 0.18, rim: "#1a5a8a" },
+};
+
+// Mapování tile.id prefixů na vizuální styl
+// SLUZBA → modrá, SBOR → zelená, AKTIVITA → fialová, OVOCE → tmavě zelená
+const TILE_ID_COLORS = {
+  SLUZBA:   { top: "#060a1e", emissive: "#378ADD", emissiveInt: 0.35, height: 0.22, rim: "#1a4a8a" },
+  SBOR:     { top: "#041a0f", emissive: "#1D9E75", emissiveInt: 0.32, height: 0.20, rim: "#0a5a3a" },
+  AKTIVITA: { top: "#0f0a1a", emissive: "#7B3FA5", emissiveInt: 0.35, height: 0.20, rim: "#4a1a7a" },
+  OVOCE:    { top: "#041a08", emissive: "#1D7A3A", emissiveInt: 0.30, height: 0.18, rim: "#0a4a1a" },
+  STAVBY:   { top: "#1a1205", emissive: "#d4ac0d", emissiveInt: 0.28, height: 0.20, rim: "#8a6a05" },
+  PRIHLASKA:{ top: "#060a1e", emissive: "#2980b9", emissiveInt: 0.30, height: 0.20, rim: "#1a5a8a" },
 };
 
 // Textury přímo jako materiál hexagonu (jen pro typy kde to dává smysl)
@@ -54,6 +65,16 @@ const TILE_EMOJI = {
   start:   "▶",
   entry:   "🤝",
   special: "⭐",
+};
+
+// Emoji pro specifická políčka dle tile.id prefixu
+const TILE_ID_EMOJI = {
+  SLUZBA:   "📢",
+  SBOR:     "🏛️",
+  AKTIVITA: "🎭",
+  OVOCE:    "🌿",
+  STAVBY:   "🔨",
+  PRIHLASKA:"📝",
 };
 
 // Čitelnější ikony — emoji jako text na billboardu
@@ -80,12 +101,22 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
   const groupRef = useRef();
   const rimRef   = useRef();
   const lightRef = useRef();
-  const col      = TILE_COLORS[tile.type] ?? TILE_COLORS.empty;
   const isEmpty  = tile.type === "empty";
-  const h        = col.height;
-  const tileType   = tile.type;
+  const tileType = tile.type;
+  const tileId   = tile.id ?? "";
+
+  // Zjisti barvy - nejdřív dle ID prefixu, pak dle typu
+  const colByIdKey = Object.keys(TILE_ID_COLORS).find((k) => tileId.startsWith(k));
+  const col = colByIdKey ? TILE_ID_COLORS[colByIdKey] : (TILE_COLORS[tileType] ?? TILE_COLORS.empty);
+  const h   = col.height;
+
   const hasTexture = tileType in TILE_TEXTURES;
-  const hasEmoji   = tileType in TILE_EMOJI;
+
+  // Emoji - nejdřív dle ID, pak dle typu
+  const emojiByIdKey = Object.keys(TILE_ID_EMOJI).find((k) => tileId.startsWith(k));
+  const hasEmoji  = emojiByIdKey ? true : tileType in TILE_EMOJI;
+  const emojiChar = emojiByIdKey ? TILE_ID_EMOJI[emojiByIdKey] : TILE_EMOJI[tileType];
+
   // useTexture musí být vždy volán - fallback na negative pro typy bez textury
   const tileTexture = useTexture(TILE_TEXTURES[tileType] ?? TILE_TEXTURES.negative);
 
@@ -198,7 +229,7 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
             anchorX="center"
             anchorY="middle"
           >
-            {TILE_EMOJI[tileType]}
+            {emojiChar}
           </Text>
         </Billboard>
       )}
