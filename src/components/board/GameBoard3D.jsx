@@ -220,20 +220,6 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
         </mesh>
       )}
 
-      {/* Emoji ikona pro typy s emoji */}
-      {!isEmpty && hasEmoji && (
-        <Billboard follow lockX={false} lockY={true} lockZ={false}>
-          <Text
-            position={[0, h + 0.28, 0]}
-            fontSize={0.30}
-            anchorX="center"
-            anchorY="middle"
-          >
-            {emojiChar}
-          </Text>
-        </Billboard>
-      )}
-
       {/* Název políčka — čitelný billboard */}
       {!isEmpty && (
         <Billboard follow lockX={false} lockY={true} lockZ={false}>
@@ -268,6 +254,8 @@ const BoardBase = () => (
         emissiveIntensity={0.05}
         roughness={0.95}
         metalness={0.0}
+        transparent
+        opacity={0.70}
       />
     </mesh>
 
@@ -279,6 +267,8 @@ const BoardBase = () => (
         emissive="#1D9E75"
         emissiveIntensity={0.06}
         roughness={0.9}
+        transparent
+        opacity={0.65}
       />
     </mesh>
 
@@ -290,6 +280,8 @@ const BoardBase = () => (
         emissive="#1D9E75"
         emissiveIntensity={0.35}
         roughness={0.6}
+        transparent
+        opacity={0.60}
       />
     </mesh>
 
