@@ -102,6 +102,8 @@ const DiceRoller3D = () => {
   const movingTotal = useGameStore((s) => s.movingTotal);
   const diceType    = useGameStore((s) => s.diceType ?? "virtual");
   const setDiceType = useGameStore((s) => s.setDiceType);
+  const deviceType  = useGameStore((s) => s.deviceType ?? "mobile");
+  const isWide      = deviceType === "tablet" || deviceType === "tv";
   const { sounds }  = useSound();
 
   const [localRolling, setLocalRolling] = useState(false);
@@ -168,11 +170,18 @@ const DiceRoller3D = () => {
     setRotation("rotateX(0deg) rotateY(0deg)");
   }, [diceRoll, isMoving, confirmMove, sounds]);
 
+  // Wide mode — kompaktnější padding a větší prvky
+  const wrapStyle = isWide ? {
+    display: "flex", flexDirection: "column",
+    alignItems: "center", gap: 10, padding: "8px 0 4px",
+    width: "100%",
+  } : {
+    display: "flex", flexDirection: "column",
+    alignItems: "center", gap: 14, padding: "14px 0 8px",
+  };
+
   return (
-    <div style={{
-      display: "flex", flexDirection: "column",
-      alignItems: "center", gap: 14, padding: "14px 0 8px",
-    }}>
+    <div style={wrapStyle}>
 
       {/* ── Aktuální hráč ── */}
       {currentPlayer && (
@@ -277,7 +286,7 @@ const DiceRoller3D = () => {
           onClick={canRoll ? handleRoll : undefined}
           whileHover={canRoll ? { scale: 1.08 } : {}}
           whileTap={canRoll ? { scale: 0.92 } : {}}
-          style={{ cursor: canRoll ? "pointer" : "default" }}
+          style={{ cursor: canRoll ? "pointer" : "default", transform: isWide ? "scale(1.3)" : "scale(1)", transformOrigin: "center" }}
         >
           <Dice3D rotation={rotation} />
         </motion.div>
@@ -367,11 +376,11 @@ const DiceRoller3D = () => {
                 whileHover={canRoll ? { scale: 1.04 } : {}}
                 whileTap={canRoll ? { scale: 0.96 } : {}}
                 style={{
-                  padding: "11px 20px",
+                  padding: isWide ? "14px 28px" : "11px 20px",
                   background: canRoll ? "#1D9E75" : "rgba(29,158,117,0.15)",
                   border: "none", borderRadius: 10,
                   color: canRoll ? "#fff" : "#5DCAA5",
-                  fontSize: 14, fontWeight: 600,
+                  fontSize: isWide ? 17 : 14, fontWeight: 600,
                   cursor: canRoll ? "pointer" : "not-allowed",
                   fontFamily: "inherit",
                 }}
@@ -402,7 +411,7 @@ const DiceRoller3D = () => {
                 style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}
               >
                 <div style={{
-                  fontSize: 34, fontWeight: 700, color: "#9FE1CB",
+                  fontSize: isWide ? 48 : 34, fontWeight: 700, color: "#9FE1CB",
                   textShadow: "0 0 20px rgba(159,225,203,0.6)",
                 }}>
                   {diceRoll}
@@ -411,10 +420,10 @@ const DiceRoller3D = () => {
                   onClick={handleConfirm}
                   whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                   style={{
-                    padding: "10px 20px",
+                    padding: isWide ? "13px 24px" : "10px 20px",
                     background: "#1D9E75", border: "none",
                     borderRadius: 10, color: "#fff",
-                    fontSize: 13, fontWeight: 600,
+                    fontSize: isWide ? 16 : 13, fontWeight: 600,
                     cursor: "pointer", fontFamily: "inherit",
                   }}
                 >
