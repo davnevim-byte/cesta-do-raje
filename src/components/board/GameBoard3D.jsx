@@ -15,7 +15,6 @@ import { OUTER_TILES, INNER_TILES } from "../../data/tiles";
 import { getAvatarColor } from "./AvatarSVG";
 import DiceRoller3D from "./DiceRoller3D";
 import { useDisplaySize } from "../../hooks/useDisplaySize";
-import { useGameStore } from "../../store/gameStore";
 import PostProcessing from "./PostProcessing";
 
 // ─── Konstanty ────────────────────────────────────────────────
