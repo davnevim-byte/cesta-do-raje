@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useGameStore } from "../../store/gameStore";
 import GameBoard3D from "../board/GameBoard3D";
+import DiceRoller3D from "../board/DiceRoller3D";
 import BoardPlayers from "../board/BoardPlayers";
 import { Timer } from "../ui/Scoreboard";
 import { FlashOverlay } from "../ui/FlashOverlay";
@@ -28,7 +29,9 @@ export const GameScreen = () => {
   const players    = useGameStore((s) => s.players) ?? [];
   const curIdx     = useGameStore((s) => s.currentPlayerIndex);
 
-  const graceCards = useGameStore((s) => s.graceCards ?? 0);
+  const graceCards  = useGameStore((s) => s.graceCards ?? 0);
+  const deviceType  = useGameStore((s) => s.deviceType ?? "mobile");
+  const isWide      = deviceType === "tablet" || deviceType === "tv";
   const { switchToZone, init, stop } = useMusic();
   const { sounds } = useSound();
 
@@ -87,6 +90,148 @@ export const GameScreen = () => {
   // ── Cleanup hudby při odchodu ─────────────────────────────
   useEffect(() => () => stop(), []);
 
+  // ── Sdílené modaly ──────────────────────────────────────────
+  const Modals = () => (
+    <>
+      <FlashOverlay />
+      <QuestionModal />
+      <WitnessingModal />
+      <TileModal />
+      <WildCardModal />
+      <ServiceModal />
+      <CongregationModal />
+      <ActivityModal />
+      <GraceCardModal />
+      <DisplaySizeControl />
+      <AnimatePresence>
+        {transition.show && transition.player && (
+          <InnerCircleTransition
+            key="inner-transition"
+            player={transition.player}
+            onDone={() => setTransition({ show: false, player: null })}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+
+  // ── Tlačítko ukončit + karty milosti ────────────────────────
+  const EndButton = ({ size = 12 }) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      {graceCards > 0 && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 4,
+          padding: "3px 8px",
+          background: "rgba(212,172,13,0.15)",
+          border: "1px solid rgba(212,172,13,0.3)",
+          borderRadius: 10, fontSize: size - 1, color: "#FAC775",
+        }}>
+          🌿 {graceCards}x
+        </div>
+      )}
+      <button
+        onClick={() => { if (window.confirm("Ukoncit hru?")) { stop(); endGame("manual"); } }}
+        style={{
+          padding: "5px 10px", background: "transparent",
+          border: "1px solid #333", borderRadius: 8,
+          color: "#555", fontSize: size, cursor: "pointer",
+          fontFamily: "inherit", minHeight: "auto",
+        }}
+      >X</button>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════════════════
+  // WIDE LAYOUT — PC / Tablet / TV
+  // Deska vlevo na plnou výšku, UI panel vpravo
+  // ════════════════════════════════════════════════════════════
+  if (isWide) {
+    const panelW = deviceType === "tv" ? 320 : 280;
+    const fontSize = deviceType === "tv" ? 15 : 13;
+
+    return (
+      <div style={{
+        width: "100vw", height: "100dvh",
+        display: "flex", flexDirection: "row",
+        background: "#060810",
+        userSelect: "none", WebkitUserSelect: "none",
+        overflow: "hidden",
+      }}>
+
+        {/* DESKA — zabere zbytek šířky */}
+        <div style={{
+          flex: 1, position: "relative",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          overflow: "hidden",
+        }}>
+          <GameBoard3D />
+        </div>
+
+        {/* UI PANEL — pravá strana */}
+        <div style={{
+          width: panelW,
+          height: "100dvh",
+          background: "rgba(6,8,14,0.96)",
+          borderLeft: "1px solid rgba(255,255,255,0.06)",
+          display: "flex", flexDirection: "column",
+          flexShrink: 0,
+          overflowY: "auto",
+        }}>
+
+          {/* Header */}
+          <div style={{
+            padding: "16px 16px 12px",
+            borderBottom: "1px solid rgba(255,255,255,0.05)",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <div>
+              <div style={{ fontSize: fontSize, fontWeight: 600, color: "#9FE1CB" }}>
+                Cesta do Raje
+              </div>
+              <div style={{
+                fontSize: fontSize - 3, color: "#0F6E56",
+                background: "rgba(15,110,86,0.12)",
+                padding: "1px 6px", borderRadius: 8, display: "inline-block", marginTop: 2,
+              }}>
+                {diffLabel}
+              </div>
+            </div>
+            <EndButton size={fontSize - 1} />
+          </div>
+
+          {/* Timer */}
+          <div style={{
+            padding: "12px 16px",
+            borderBottom: "1px solid rgba(255,255,255,0.04)",
+            display: "flex", justifyContent: "center",
+          }}>
+            <Timer />
+          </div>
+
+          {/* Hráči */}
+          <div style={{
+            padding: "12px 16px",
+            borderBottom: "1px solid rgba(255,255,255,0.04)",
+            flex: "0 0 auto",
+          }}>
+            <BoardPlayers inline={true} />
+          </div>
+
+          {/* Kostka */}
+          <div style={{ padding: "8px 16px", flex: 1 }}>
+            <DiceRoller3D />
+          </div>
+
+        </div>
+
+        <Modals />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT — původní svislý layout
+  // ════════════════════════════════════════════════════════════
   return (
     <div style={{
       minHeight:        "100dvh",
@@ -113,7 +258,7 @@ export const GameScreen = () => {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 16 }}>🌿</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: "#9FE1CB" }}>
-            Cesta do Ráje
+            Cesta do Raje
           </span>
           <span style={{
             fontSize: 10, color: "#0F6E56",
@@ -123,7 +268,6 @@ export const GameScreen = () => {
             {diffLabel}
           </span>
         </div>
-
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {graceCards > 0 && (
             <div style={{
@@ -138,16 +282,14 @@ export const GameScreen = () => {
           )}
           <Timer />
           <button
-            onClick={() => {
-              if (window.confirm("Ukončit hru?")) { stop(); endGame("manual"); }
-            }}
+            onClick={() => { if (window.confirm("Ukoncit hru?")) { stop(); endGame("manual"); } }}
             style={{
               padding: "5px 10px", background: "transparent",
               border: "1px solid #333", borderRadius: 8,
               color: "#555", fontSize: 12, cursor: "pointer",
               fontFamily: "inherit", minHeight: "auto",
             }}
-          >✕</button>
+          >X</button>
         </div>
       </div>
 
@@ -163,32 +305,7 @@ export const GameScreen = () => {
       {/* AVATARY HRÁČŮ */}
       <BoardPlayers />
 
-      {/* MODALY */}
-      <FlashOverlay />
-      <QuestionModal />
-      <WitnessingModal />
-      <TileModal />
-      <WildCardModal />
-
-      {/* NOVÉ MODALY */}
-      <ServiceModal />
-      <CongregationModal />
-      <ActivityModal />
-      <GraceCardModal />
-
-      {/* NASTAVENÍ VELIKOSTI */}
-      <DisplaySizeControl />
-
-      {/* PŘECHOD DO SBORU */}
-      <AnimatePresence>
-        {transition.show && transition.player && (
-          <InnerCircleTransition
-            key="inner-transition"
-            player={transition.player}
-            onDone={() => setTransition({ show: false, player: null })}
-          />
-        )}
-      </AnimatePresence>
+      <Modals />
     </div>
   );
 };
