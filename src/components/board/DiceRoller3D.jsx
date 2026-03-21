@@ -23,10 +23,10 @@ const DOTS = {
 // Rotace kostky aby daná hodnota byla viditelná zepředu
 const SHOW_ROTATIONS = {
   1: "rotateX(0deg)   rotateY(0deg)",
-  2: "rotateX(90deg)  rotateY(0deg)",
+  2: "rotateX(-90deg) rotateY(0deg)",
   3: "rotateX(0deg)   rotateY(-90deg)",
   4: "rotateX(0deg)   rotateY(90deg)",
-  5: "rotateX(-90deg) rotateY(0deg)",
+  5: "rotateX(90deg)  rotateY(0deg)",
   6: "rotateX(0deg)   rotateY(180deg)",
 };
 
@@ -100,6 +100,8 @@ const DiceRoller3D = () => {
   const isMoving    = useGameStore((s) => s.isMoving);
   const movingStep  = useGameStore((s) => s.movingStep);
   const movingTotal = useGameStore((s) => s.movingTotal);
+  const diceType    = useGameStore((s) => s.diceType ?? "virtual");
+  const setDiceType = useGameStore((s) => s.setDiceType);
   const { sounds }  = useSound();
 
   const [localRolling, setLocalRolling] = useState(false);
@@ -281,6 +283,28 @@ const DiceRoller3D = () => {
         </motion.div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 130 }}>
+
+          {/* Přepínač fyzická/virtuální */}
+          {diceRoll === null && !isMoving && !localRolling && (
+            <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
+              {["virtual", "physical"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => { setDiceType(type); setPhysicalValue(null); }}
+                  style={{
+                    flex: 1, padding: "4px 6px", fontSize: 10,
+                    background: diceType === type ? "rgba(29,158,117,0.3)" : "transparent",
+                    border: `1px solid ${diceType === type ? "#1D9E75" : "#333"}`,
+                    borderRadius: 6, color: diceType === type ? "#9FE1CB" : "#555",
+                    cursor: "pointer", fontFamily: "inherit",
+                  }}
+                >
+                  {type === "virtual" ? "🎲 Virtuální" : "🎯 Vlastní"}
+                </button>
+              ))}
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             {isMoving ? (
               <motion.div
@@ -297,6 +321,42 @@ const DiceRoller3D = () => {
               </motion.div>
 
             ) : diceRoll === null && !localRolling ? (
+              diceType === "physical" ? (
+                <motion.div
+                  key="physical"
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  style={{ display: "flex", flexDirection: "column", gap: 6 }}
+                >
+                  <div style={{ fontSize: 11, color: "#5DCAA5", textAlign: "center" }}>
+                    Hodil/a jsem:
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 4 }}>
+                    {[1,2,3,4,5,6].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => {
+                          if (!canRoll) return;
+                          sounds.dice();
+                          useGameStore.getState().rollDiceWithValue(n);
+                        }}
+                        disabled={!canRoll}
+                        style={{
+                          padding: "8px 4px", fontSize: 16, fontWeight: 700,
+                          background: "rgba(29,158,117,0.15)",
+                          border: "1px solid rgba(29,158,117,0.3)",
+                          borderRadius: 8, color: "#9FE1CB",
+                          cursor: canRoll ? "pointer" : "not-allowed",
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : (
               <motion.button
                 key="roll"
                 onClick={handleRoll}
@@ -318,6 +378,7 @@ const DiceRoller3D = () => {
               >
                 🎲 Hodit
               </motion.button>
+              )
 
             ) : localRolling ? (
               <motion.div
