@@ -17,6 +17,7 @@ import { TileModal } from "../modals/TileModal";
 import WildCardModal from "../modals/WildCardModal";
 import { useMusic } from "../../hooks/useMusic";
 import { DisplaySizeControl } from "../ui/DisplaySizeControl";
+import TurnLogModal from "../modals/TurnLogModal";
 import ServiceModal from "../modals/ServiceModal";
 import CongregationModal from "../modals/CongregationModal";
 import ActivityModal from "../modals/ActivityModal";
@@ -30,6 +31,7 @@ export const GameScreen = () => {
   const curIdx     = useGameStore((s) => s.currentPlayerIndex);
 
   const graceCards  = useGameStore((s) => s.graceCards ?? 0);
+  const [showLog, setShowLog] = useState(false);
   const deviceType  = useGameStore((s) => s.deviceType ?? "mobile");
   const isWide      = deviceType === "tablet" || deviceType === "tv";
   const { switchToZone, init, stop } = useMusic();
@@ -103,6 +105,7 @@ export const GameScreen = () => {
       <ActivityModal />
       <GraceCardModal />
       <DisplaySizeControl />
+      {showLog && <TurnLogModal onClose={() => setShowLog(false)} />}
       <AnimatePresence>
         {transition.show && transition.player && (
           <InnerCircleTransition
@@ -280,6 +283,15 @@ export const GameScreen = () => {
             </div>
           )}
           <Timer />
+          <button
+            onClick={() => setShowLog(true)}
+            style={{
+              padding: "5px 10px", background: "transparent",
+              border: "1px solid #333", borderRadius: 8,
+              color: "#555", fontSize: 11, cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >Log</button>
           <button
             onClick={() => { if (window.confirm("Ukoncit hru?")) { stop(); endGame("manual"); } }}
             style={{
