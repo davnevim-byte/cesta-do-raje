@@ -107,6 +107,7 @@ const initialState = {
 
   // Svědectví timer
   witnessingTimeRemaining: null,
+  witnessingStarted: false,
 
   // Konec hry
   endResults: null,   // evaluateAllPlayers + calculateEndAwards
@@ -401,17 +402,9 @@ export const useGameStore = create(
               showWitnessing: true,
               currentWitnessing: scenario,
               witnessingTimeRemaining: WITNESSING_TIME,
+              witnessingStarted: false,
             });
-
-            witnessingInterval = setInterval(() => {
-              const { witnessingTimeRemaining } = get();
-              if (witnessingTimeRemaining === null || witnessingTimeRemaining <= 0) {
-                clearInterval(witnessingInterval);
-                get().answerWitnessing(false);
-              } else {
-                set({ witnessingTimeRemaining: witnessingTimeRemaining - 1 });
-              }
-            }, 1000);
+            // Timer se nespustí automaticky - čeká na startWitnessingTimer()
 
             const updated = [...get().players];
             updated[playerIndex] = {
@@ -517,6 +510,22 @@ export const useGameStore = create(
         });
 
         get()._nextPlayer();
+      },
+
+      startWitnessingTimer: () => {
+        const { witnessingTimeRemaining } = get();
+        if (!witnessingTimeRemaining) return;
+        set({ witnessingStarted: true });
+        clearInterval(witnessingInterval);
+        witnessingInterval = setInterval(() => {
+          const { witnessingTimeRemaining } = get();
+          if (witnessingTimeRemaining === null || witnessingTimeRemaining <= 0) {
+            clearInterval(witnessingInterval);
+            get().answerWitnessing(false);
+          } else {
+            set({ witnessingTimeRemaining: witnessingTimeRemaining - 1 });
+          }
+        }, 1000);
       },
 
       answerWitnessing: (success) => {
