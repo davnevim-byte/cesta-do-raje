@@ -660,13 +660,12 @@ export const useGameStore = create(
 
       declineGraceCard: () => {
         set({ showGraceCard: false });
-        const { currentTileAction } = get();
-        get()._showTileInstruction(
-          get().players[get().currentPlayerIndex] ? 
-          (get().players[get().currentPlayerIndex].circle === "outer" ? OUTER_TILES : INNER_TILES)[get().players[get().currentPlayerIndex].position]
-          : null,
-          get().currentPlayerIndex
-        );
+        const { players, currentPlayerIndex } = get();
+        const player = players[currentPlayerIndex];
+        if (!player) return;
+        const tiles = player.circle === "outer" ? OUTER_TILES : INNER_TILES;
+        const tile  = tiles[player.position];
+        if (tile) get()._showTileInstruction(tile, currentPlayerIndex);
       },
 
       answerActivity: (success) => {
@@ -892,6 +891,10 @@ export const useGameStore = create(
       //  DALŠÍ HRÁČ
       // ─────────────────────────────
 
+      endTurn: () => {
+        setTimeout(() => get()._nextPlayer(), 800);
+      },
+
       _nextPlayer: () => {
         const { players, currentPlayerIndex } = get();
         const next = (currentPlayerIndex + 1) % players.length;
@@ -921,6 +924,8 @@ export const useGameStore = create(
       endGame: (reason = "manual") => {
         clearInterval(timerInterval);
         clearInterval(witnessingInterval);
+        clearInterval(serviceInterval);
+        clearInterval(congregationInterval);
 
         const { players } = get();
         const evaluated   = evaluateAllPlayers(players);
@@ -934,6 +939,11 @@ export const useGameStore = create(
           showTileAction:  false,
           showWildCard:    false,
           isTimerRunning:  false,
+          showService:     false,
+          showCongregation: false,
+          showActivity:    false,
+          showGraceCard:   false,
+          graceCards:      0,
         });
       },
 
@@ -944,6 +954,8 @@ export const useGameStore = create(
       restartGame: () => {
         clearInterval(timerInterval);
         clearInterval(witnessingInterval);
+        clearInterval(serviceInterval);
+        clearInterval(congregationInterval);
         const { isMuted } = get();
         set({ ...initialState, gamePhase: "setup", hasPlayedBefore: true, isMuted });
       },
