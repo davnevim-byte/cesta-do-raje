@@ -95,7 +95,7 @@ const Tile3D = ({ tile, position, isActive, isMovingHere }) => {
 
     if (isMovingHere) {
       // Políčko poskočí při přistání — rychlý bounce
-      groupRef.current.position.y = Math.abs(Math.sin(t * 10)) * 0.15;
+      groupRef.current.position.y = Math.abs(Math.sin(t * 6)) * 0.12;
       if (lightRef.current) lightRef.current.intensity = 2.5 + Math.sin(t * 12) * 0.8;
     } else if (isActive && !isEmpty) {
       // Jemné zvednutí — hráč zde stojí
@@ -377,7 +377,7 @@ const PlayerFigurine = ({
 
     // Plynulý pohyb — lerp místo react-spring
     if (groupRef.current) {
-      groupRef.current.position.lerp(targetVec.current, 0.12);
+      groupRef.current.position.lerp(targetVec.current, 0.07);
     }
 
     if (!bodyRef.current || !headRef.current) return;
@@ -387,10 +387,10 @@ const PlayerFigurine = ({
     let baseY = 0.05;
 
     if (emotion === "jump") {
-      baseY = Math.abs(Math.sin(t * 8)) * 0.32;
+      baseY = Math.abs(Math.sin(t * 5)) * 0.25;
     } else if (emotion === "shake") {
       if (rootRef.current) {
-        rootRef.current.rotation.z = Math.sin(t * 18) * 0.15;
+        rootRef.current.rotation.z = Math.sin(t * 10) * 0.12;
       }
     } else if (emotion === "cheer") {
       baseY = Math.abs(Math.sin(t * 5)) * 0.22;
@@ -632,9 +632,9 @@ const SceneLighting = ({ activeCircle, players, curIdx }) => {
 
         // Plynulý lerp pozice světla nad hráčem
         followRef.current.position.x +=
-          (tx - followRef.current.position.x) * 0.08;
+          (tx - followRef.current.position.x) * 0.05;
         followRef.current.position.z +=
-          (tz - followRef.current.position.z) * 0.08;
+          (tz - followRef.current.position.z) * 0.05;
 
         // Target světla — na hráče
         followRef.current.target.position.set(tx, 0, tz);
@@ -730,7 +730,7 @@ const CameraController = ({ players, curIdx, isMoving, movingStep, movingTotal }
     } else if (phaseRef.current === "moving") {
       // Právě přistálo — krátká landing fáze
       phaseRef.current = "landing";
-      setTimeout(() => { phaseRef.current = "overview"; }, 1800);
+      setTimeout(() => { phaseRef.current = "overview"; }, 2400);
     }
   }, [isMoving]);
 
@@ -747,7 +747,7 @@ const CameraController = ({ players, curIdx, isMoving, movingStep, movingTotal }
 
     let targetPos  = new THREE.Vector3();
     let targetLook = new THREE.Vector3();
-    let lerpSpeed  = 0.03;
+    let lerpSpeed  = 0.02;
 
     if (phaseRef.current === "moving") {
       // Kamera sleduje figurku zblízka — ze strany a shora (45°)
@@ -759,7 +759,7 @@ const CameraController = ({ players, curIdx, isMoving, movingStep, movingTotal }
         pz + Math.sin(behindAngle) * 3.8,
       );
       targetLook.set(px * 0.7, 0.3, pz * 0.7);
-      lerpSpeed = 0.06; // rychlejší sledování při pohybu
+      lerpSpeed = 0.04; // rychlejší sledování při pohybu
 
     } else if (phaseRef.current === "landing") {
       // Dramatický nájezd na přistávající políčko — kamera klesne níže
@@ -769,18 +769,18 @@ const CameraController = ({ players, curIdx, isMoving, movingStep, movingTotal }
         pz * 0.5 + Math.sin(angle + 1.2) * 3,
       );
       targetLook.set(px, 0.5, pz);
-      lerpSpeed = 0.05;
+      lerpSpeed = 0.035;
 
     } else {
       // Overview — celá deska, kamera pomalu obíhá + mírně osciluje
-      const orbitAngle = t * 0.04; // velmi pomalé otáčení
+      const orbitAngle = t * 0.025; // velmi pomalé otáčení
       targetPos.set(
         Math.sin(orbitAngle) * 1.5,
         9.5 + Math.sin(t * 0.15) * 0.4,
         9.0 + Math.cos(orbitAngle) * 1.0,
       );
       targetLook.set(0, 0, 0);
-      lerpSpeed = 0.025;
+      lerpSpeed = 0.018;
     }
 
     // Plynulý lerp
