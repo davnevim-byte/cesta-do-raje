@@ -124,6 +124,10 @@ const initialState = {
   // Aktivita (vnitřní kruh)
   showActivity: false,
 
+  // Karty milosti
+  graceCards: 0,
+  showGraceCard: false,
+
   // Konec hry
   endResults: null,   // evaluateAllPlayers + calculateEndAwards
 
@@ -194,6 +198,7 @@ export const useGameStore = create(
             skipTurnsRemaining:   0,
             hasEnteredInner:      false,
             doorsVisitedThisRound: false,
+            startPassCount: 0,
             fruitScore:           createInitialFruitScore(),
             bonusRollNextTurn:    false,
             turnCount:            0,
@@ -359,6 +364,7 @@ export const useGameStore = create(
           bonusRollNextTurn:    stepsDone + 1 >= totalSteps ? false : player.bonusRollNextTurn,
           // Resetuj doorsVisitedThisRound pokud prošel startem
           doorsVisitedThisRound: passedStart ? false : player.doorsVisitedThisRound,
+          startPassCount: passedStart ? (player.startPassCount ?? 0) + 1 : (player.startPassCount ?? 0),
         };
 
         set({
@@ -434,7 +440,13 @@ export const useGameStore = create(
 
           // Negativní políčko
           case "negative": {
-            get()._showTileInstruction(tile, playerIndex);
+            const { graceCards } = get();
+            if (graceCards > 0) {
+              // Hráč má kartu milosti — nabídni použití
+              set({ showGraceCard: true });
+            } else {
+              get()._showTileInstruction(tile, playerIndex);
+            }
             break;
           }
 
@@ -481,9 +493,23 @@ export const useGameStore = create(
             break;
           }
 
-          // Start
+          // Start — záchranná síť po prvním průchodu
           case "start": {
-            get()._showTileInstruction(tile, playerIndex);
+            const passCount = player.startPassCount ?? 0;
+            if (passCount > 0) {
+              // Hráč prošel startem znovu — nabídni možnost svědectví
+              const raw      = getRandomDoorsScenario();
+              const scenario = fillScenarioNames(raw, player.name, target.name);
+              clearInterval(witnessingInterval);
+              set({
+                showWitnessing: true,
+                currentWitnessing: scenario,
+                witnessingTimeRemaining: 180,
+                witnessingStarted: false,
+              });
+            } else {
+              get()._showTileInstruction(tile, playerIndex);
+            }
             break;
           }
 
@@ -619,6 +645,28 @@ export const useGameStore = create(
       // ── Aktivita ────────────────────────────────────────────
       showActivityModal: () => {
         set({ showActivity: true });
+      },
+
+      addGraceCard: () => {
+        set((s) => ({ graceCards: s.graceCards + 1 }));
+      },
+
+      useGraceCard: () => {
+        const { graceCards } = get();
+        if (graceCards <= 0) return;
+        set({ graceCards: graceCards - 1, showGraceCard: false });
+        get().endTurn();
+      },
+
+      declineGraceCard: () => {
+        set({ showGraceCard: false });
+        const { currentTileAction } = get();
+        get()._showTileInstruction(
+          get().players[get().currentPlayerIndex] ? 
+          (get().players[get().currentPlayerIndex].circle === "outer" ? OUTER_TILES : INNER_TILES)[get().players[get().currentPlayerIndex].position]
+          : null,
+          get().currentPlayerIndex
+        );
       },
 
       answerActivity: (success) => {
@@ -931,8 +979,8 @@ export const useGameStore = create(
       },
 
       isModalOpen: () => {
-        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity } = get();
-        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity;
+        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity, showGraceCard } = get();
+        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity || showGraceCard;
       },
     }),
 
