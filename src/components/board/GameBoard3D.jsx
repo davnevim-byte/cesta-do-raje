@@ -6,7 +6,7 @@
 import { useRef, useState, useCallback, useMemo, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  Text, Billboard, Sparkles, Stars, useTexture,
+  Text, Billboard, Sparkles, Stars, useTexture, useGLTF,
 } from "@react-three/drei";
 import * as THREE from "three";
 
