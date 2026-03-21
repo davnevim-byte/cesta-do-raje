@@ -757,6 +757,40 @@ export const INNER_TILES = [
     ],
     penalty: null, reward: null, fruit: "pokoj",
   },
+  {
+    id: "SJEZD",
+    name: "Regionální sjezd",
+    type: "special",
+    image: "special.png",
+    color: "#185FA5",
+    icon: "🏟️",
+    atmosphere: "light",
+    instructions: [
+      "Regionální sjezd! Moderátor náhodně vybere scénář ze kategorie sjezd — sdílení, pozvání nebo organizace.",
+      "Sdílej jedno konkrétní poucení z posledního regionálního sjezdu které tě oslovilo. Ostatní hodnotí upřímnost a konkrétnost.",
+      "Co se ti na regionálním sjezdu líbí nejvíce? Sdílej osobní zážitek — neformálně, jako s přítelem.",
+    ],
+    penalty: null,
+    reward: { type: "moveForward", spaces: 2, description: "Sjezdové povzbuzení — posun o 2 políčka vpřed!" },
+    fruit: "radost",
+  },
+  {
+    id: "PREDNASKA",
+    name: "Přednáška pro veřejnost",
+    type: "special",
+    image: "special.png",
+    color: "#185FA5",
+    icon: "🎤",
+    atmosphere: "light",
+    instructions: [
+      "Přednáška pro veřejnost! Zahraj scénář pozvání — moderátor vybere scénář ze kategorie přednáška pro veřejnost.",
+      "Pozvi spoluhráče na přednášku pro veřejnost — máš 2 minuty. Jeden hráč hraje váhajícího přítele. Ostatní hlasují.",
+      "Jaké téma přednášky pro veřejnost by tě nejvíce zaujalo? Proč? Sdílej s ostatními a diskutujte.",
+    ],
+    penalty: null,
+    reward: { type: "moveForward", spaces: 1, description: "Dobré svědectví — posun o 1 políčko vpřed!" },
+    fruit: "laskavost",
+  },
 ];
 
 
