@@ -1,22 +1,22 @@
 // ============================================================
-//  POLÍČKA HERNÍ DESKY — Cesta do Ráje
+//  POLICKA HERNI DESKY - Cesta do Raje
 //  Terminologie: NWT, jw.org
-/
-//  Každé políčko má:
-//    name        — zobrazovaný název
-//    type        — kategorie (negative / positive / special / doors / entry / start / empty)
-//    image       — název souboru obrázku (z /images/tiles/)
-//    color       — barva políčka na desce
-//    icon        — emoji ikona
-//    instructions — pole 3–5 konkrétních instrukcí (náhodně se vybere jedna)
-//    penalty     — co se stane při negativním políčku (null = jen instrukce)
-//    reward      — co se stane při splnění pozitivního políčka (null = nic extra)
-//    fruit       — ovoce ducha které políčko přináší (ze fruitOfSpirit.js)
-//    atmosphere  — "light" nebo "dark" (pro vizuální efekt)
+//
+//  Kazde policko má:
+//    name        - zobrazovany nazev
+//    type        - kategorie (negative / positive / special / doors / entry / start / empty)
+//    image       - nazev souboru obrazku (z /images/tiles/)
+//    color       - barva políčka na desce
+//    icon        - emoji ikona
+//    instructions - pole 3–5 konkrétních instrukcí (náhodně se vybere jedna)
+//    penalty     - co se stane při negativním políčku (null = jen instrukce)
+//    reward      - co se stane při splnění pozitivního políčka (null = nic extra)
+//    fruit       - ovoce ducha které policko přináší (ze fruitOfSpirit.js)
+//    atmosphere  - "light" nebo "dark" (pro vizuální efekt)
 // ============================================================
 
 // ─────────────────────────────────────────────
-//  VNĚJŠÍ KRUH — život ve světě (18 políček)
+//  VNĚJŠÍ KRUH - život ve světě (18 políček)
 // ─────────────────────────────────────────────
 
 export const OUTER_TILES = [
