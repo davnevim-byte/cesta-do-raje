@@ -15,7 +15,7 @@ import { persist } from "zustand/middleware";
 
 import { OUTER_TILES, INNER_TILES, getTileAtPosition, getRandomInstruction } from "../data/tiles";
 import { getRandomQuestion } from "../data/questions";
-import { getRandomScenario, fillScenarioNames } from "../data/scenarios";
+import { getRandomScenario, getRandomDoorsScenario, fillScenarioNames } from "../data/scenarios";
 import { getRandomWildCard, fillWildCardNames, WILD_CARD_TRIGGER_CHANCE } from "../data/wildCards";
 import { createInitialFruitScore, addFruit, evaluateAllPlayers, calculateEndAwards } from "../data/fruitOfSpirit";
 
@@ -393,7 +393,7 @@ export const useGameStore = create(
               get()._showTileInstruction(tile, playerIndex);
               break;
             }
-            const raw      = getRandomScenario();
+            const raw      = getRandomDoorsScenario();
             const scenario = fillScenarioNames(raw, player.name, target.name);
             const WITNESSING_TIME = 180;
             clearInterval(witnessingInterval);
