@@ -21,13 +21,15 @@ export const SetupScreen = () => {
   const [timer,       setTimer]       = useState(60);
   const [step,        setStep]        = useState(0); // 0 = zařízení, 1 = hráči, 2 = nastavení
   const [deviceType,  setDeviceType]  = useState(null);
+  const [quickMode,   setQuickMode]   = useState(false);
 
   const setDeviceTypeStore = useGameStore((s) => s.setDeviceType);
+  const setQuickModeStore  = useGameStore((s) => s.setQuickMode);
 
   const handleStart = () => {
     const validNames = names.slice(0, playerCount);
     setDeviceTypeStore(deviceType ?? "mobile");
-    startGame(playerCount, validNames, avatars.slice(0, playerCount), difficulty, timer);
+    startGame(playerCount, validNames, avatars.slice(0, playerCount), difficulty, quickMode ? 20 : timer, quickMode);
   };
 
   const difficultyOptions = [
@@ -37,6 +39,10 @@ export const SetupScreen = () => {
   ];
 
   const timerOptions = [30, 45, 60, 90, 120];
+  const gameModeOptions = [
+    { key: false, label: "Klasická hra", desc: "Plná deska, všechna políčka", emoji: "🎯" },
+    { key: true,  label: "Rychlá hra",  desc: "Pro děti — kratší trasa, jednodušší", emoji: "⚡" },
+  ];
 
   return (
     <div style={{
@@ -84,7 +90,7 @@ export const SetupScreen = () => {
               ].map((device) => (
                 <motion.button
                   key={device.id}
-                  onClick={() => { setDeviceType(device.id); setStep(1); }}
+                  onClick={() => { setDeviceType(device.id); setDeviceTypeStore(device.id); setStep(1); }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   style={{
@@ -223,7 +229,42 @@ export const SetupScreen = () => {
               exit={{ opacity: 0, x: -20 }}
               style={{ display: "flex", flexDirection: "column", gap: 20 }}
             >
-              {/* Obtížnost */}
+              {/* Rychla vs klasicka hra */}
+              <div style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: 14, padding: "16px",
+              }}>
+                <div style={{ fontSize: 13, color: "#666", marginBottom: 12 }}>
+                  Typ hry
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {gameModeOptions.map((m) => (
+                    <motion.button
+                      key={String(m.key)}
+                      onClick={() => setQuickMode(m.key)}
+                      whileTap={{ scale: 0.97 }}
+                      style={{
+                        flex: 1, padding: "12px 8px",
+                        background: quickMode === m.key ? "rgba(29,158,117,0.15)" : "transparent",
+                        border: `1.5px solid ${quickMode === m.key ? "#1D9E75" : "rgba(255,255,255,0.08)"}`,
+                        borderRadius: 10, cursor: "pointer",
+                        fontFamily: "inherit", textAlign: "center",
+                      }}
+                    >
+                      <div style={{ fontSize: 20, marginBottom: 4 }}>{m.emoji}</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: quickMode === m.key ? "#9FE1CB" : "#666" }}>
+                        {m.label}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#444", marginTop: 2 }}>
+                        {m.desc}
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+            {/* Obtížnost */}
               <div style={{
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid rgba(255,255,255,0.08)",
