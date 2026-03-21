@@ -439,37 +439,40 @@ const AVATAR_GLB_MAP = {
 
 
 // ─── Kenney Mini Character model ─────────────────────────────
-const KenneyCharacter = ({ avatarId, color, emotion, isActive, lArmRef, rArmRef, headRef }) => {
+const KenneyCharacter = ({ avatarId, color, isActive }) => {
   const url = AVATAR_GLB_MAP[avatarId] ?? AVATAR_GLB_MAP.AVATAR01;
   const { scene } = useGLTF(url);
 
-  // Klon scény aby každý hráč měl vlastní instanci
-  const cloned = useMemo(() => {
+  // Klon + autocentering pomocí Box3
+  const { cloned, yOffset } = useMemo(() => {
     const c = scene.clone(true);
-    // Resetuj transform clonu - nechceme zdědit worldSpace pozici
     c.position.set(0, 0, 0);
     c.rotation.set(0, 0, 0);
     c.scale.set(1, 1, 1);
-    // Obarvi model barvou hráče (emissive tint)
+
+    // Změř skutečné rozměry modelu
+    const box = new THREE.Box3().setFromObject(c);
+    // Zarovnej spodek modelu na Y=0
+    const yOff = -box.min.y;
+
+    // Obarvi model
     c.traverse((node) => {
       if (node.isMesh && node.material) {
         node.material = node.material.clone();
         node.material.emissive = new THREE.Color(color);
-        node.material.emissiveIntensity = isActive ? 0.25 : 0.06;
+        node.material.emissiveIntensity = isActive ? 0.3 : 0.08;
       }
     });
-    return c;
+    return { cloned: c, yOffset: yOff };
   }, [scene, color, isActive]);
 
-  // Scale 1.0 = ~1.8j vysoka postava
-  // Board OUTER_R=5.2, hex ~0.8j wide -> figurka ~1.5j vysoka
   const scale = 0.85;
 
   return (
     <primitive
       object={cloned}
       scale={[scale, scale, scale]}
-      position={[0, 0.0, 0]}
+      position={[0, yOffset * scale, 0]}
       rotation={[0, Math.PI, 0]}
     />
   );
@@ -590,11 +593,7 @@ const PlayerFigurine = ({
             <KenneyCharacter
               avatarId={player.avatarId}
               color={color}
-              emotion={emotion}
               isActive={isActive}
-              lArmRef={lArmRef}
-              rArmRef={rArmRef}
-              headRef={headRef}
             />
           </Suspense>
 
