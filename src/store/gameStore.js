@@ -479,6 +479,26 @@ export const useGameStore = create(
               get().showActivityModal();
               break;
             }
+            // Políčko Regionální sjezd
+            if (tileId.startsWith("SJEZD")) {
+              const raw      = getRandomCongregationScenario();
+              const scenario = fillScenarioNames(raw, player.name, target.name);
+              get().startCongregation(scenario);
+              break;
+            }
+            // Políčko Přednáška pro veřejnost
+            if (tileId.startsWith("PREDNASKA")) {
+              const raw      = getRandomDoorsScenario();
+              const scenario = fillScenarioNames(raw, player.name, target.name);
+              clearInterval(witnessingInterval);
+              set({
+                showWitnessing: true,
+                currentWitnessing: scenario,
+                witnessingTimeRemaining: 180,
+                witnessingStarted: false,
+              });
+              break;
+            }
             // Ostatní speciální (Stavby, Přihláška, Ovoce ducha...)
             get()._showTileInstruction(tile, playerIndex);
             break;
