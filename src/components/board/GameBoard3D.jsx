@@ -458,15 +458,15 @@ const KenneyCharacter = ({ avatarId, color, emotion, isActive, lArmRef, rArmRef,
   }, [scene, color, isActive]);
 
   // Kenney mini chars jsou velké ~1.8 jednotek — zmenšíme
-  // Scale: Kenney mini chars jsou ~1.8j vysoki pri scale=1
-  // Chceme ~0.9j vysoke figurky
-  const scale = 0.5;
+  // Kenney mini chars - pivot je uprostred tela
+  // Zvedneme model vysoko nad policko
+  const scale = 0.55;
 
   return (
     <primitive
       object={cloned}
       scale={[scale, scale, scale]}
-      position={[0, 0.08, 0]}
+      position={[0, 0.5, 0]}
       rotation={[0, Math.PI, 0]}
     />
   );
@@ -575,7 +575,7 @@ const PlayerFigurine = ({
 
       {/* Celé tělo — animovaná skupina */}
       <group ref={rootRef}>
-        <group ref={bodyRef} position={[0, 0.15, 0]}>
+        <group ref={bodyRef} position={[0, 0.05, 0]}>
 
           {/* Kenney Mini Character GLB model */}
           <Suspense fallback={
@@ -596,7 +596,7 @@ const PlayerFigurine = ({
           </Suspense>
 
           {/* Hlava - pro jméno billboard */}
-          <group ref={headRef} position={[0, 1.0, 0]}>
+          <group ref={headRef} position={[0, 1.6, 0]}>
 
             {/* Jméno jako billboard */}
             <Billboard follow lockX={false} lockY={true} lockZ={false}>
@@ -618,7 +618,7 @@ const PlayerFigurine = ({
           {isActive && (
             <Billboard>
               <Text
-                position={[0, 1.35, 0]}
+                position={[0, 2.0, 0]}
                 fontSize={0.22}
                 color={color}
                 anchorX="center"
