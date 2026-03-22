@@ -30,9 +30,9 @@ const AvatarPicker = ({ value, onChange, playerName }) => {
           transition:   "border-color 0.2s",
           position:     "relative",
         }}
-        title={`Změnit avatar — aktuálně: ${current.name}`}
+        title={`Zmen avatar — aktualne: ${current.name}`}
       >
-        <CurrentComp size={44} />
+        <CurrentComp size={52} />
         {/* Malá tužka ikonka */}
         <div style={{
           position:       "absolute",
@@ -83,7 +83,7 @@ const AvatarPicker = ({ value, onChange, playerName }) => {
             <div style={{
               display:             "grid",
               gridTemplateColumns: "repeat(4, 1fr)",
-              gap:                 8,
+              gap:                 6,
             }}>
               {AVATAR_CONFIGS.map((cfg) => {
                 const Comp     = getAvatarComponent(cfg.id);
@@ -92,29 +92,53 @@ const AvatarPicker = ({ value, onChange, playerName }) => {
                   <motion.button
                     key={cfg.id}
                     onClick={() => { onChange(cfg.id); setOpen(false); }}
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.08, y: -2 }}
                     whileTap={{ scale: 0.93 }}
                     style={{
-                      background:   selected ? `${cfg.color}22` : "transparent",
-                      border:       `2px solid ${selected ? cfg.color : "transparent"}`,
-                      borderRadius: 10,
-                      padding:      4,
-                      cursor:       "pointer",
-                      display:      "flex",
-                      flexDirection:"column",
-                      alignItems:   "center",
-                      gap:          3,
+                      background:    selected
+                        ? `${cfg.color}28`
+                        : "rgba(255,255,255,0.03)",
+                      border:        `2px solid ${selected ? cfg.color : "rgba(255,255,255,0.06)"}`,
+                      borderRadius:  10,
+                      padding:       "6px 4px 4px",
+                      cursor:        "pointer",
+                      display:       "flex",
+                      flexDirection: "column",
+                      alignItems:    "center",
+                      gap:           3,
+                      boxShadow:     selected ? `0 0 12px ${cfg.color}44` : "none",
+                      transition:    "all 0.2s",
                     }}
                     title={cfg.name}
                   >
-                    <Comp size={44} />
+                    {/* Avatar s pulzující září pokud vybrán */}
+                    <div style={{ position: "relative" }}>
+                      <Comp size={50} />
+                      {selected && (
+                        <div style={{
+                          position: "absolute", inset: -3,
+                          borderRadius: "50%",
+                          border: `2px solid ${cfg.color}`,
+                          animation: "pulse 1.5s infinite",
+                          opacity: 0.6,
+                        }} />
+                      )}
+                    </div>
                     <span style={{
-                      fontSize:  8,
-                      color:     selected ? cfg.color : "#555",
-                      fontWeight:selected ? 700 : 400,
+                      fontSize:   8,
+                      color:      selected ? cfg.color : "#555",
+                      fontWeight: selected ? 700 : 400,
+                      letterSpacing: 0.2,
                     }}>
                       {cfg.name}
                     </span>
+                    {selected && (
+                      <div style={{
+                        width: 5, height: 5,
+                        borderRadius: "50%",
+                        background: cfg.color,
+                      }} />
+                    )}
                   </motion.button>
                 );
               })}
