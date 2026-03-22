@@ -95,7 +95,7 @@ const getTilePos3D = (i, total, radius) => {
   const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
   return [
     radius * Math.cos(angle),
-    BOARD_Y,
+    BOARD_Y + 0.18,  // Nad vrchem hexagonu
     radius * Math.sin(angle),
   ];
 };
