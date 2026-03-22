@@ -34,7 +34,7 @@ const OnboardingScreen = () => {
   const steps = [
     { emoji: "🌍", title: "Vnější kruh — svět",  desc: "Startuj ve světě plném pokušení. Vyhni se negativním políčkům a hledej Dveře." },
     { emoji: "🚪", title: "Dveře — svědectví",   desc: "Přistáš-li na Dveřích, zahraješ scénář svědectví. Úspěch = vstup do sboru!" },
-    { emoji: "⛪", title: "Vnitřní kruh — sbor", desc: "Ve sboru se duchově rosteš přes studium, modlitbu a shromáždění. Cílem je Ráj." },
+    { emoji: "🏘️", title: "Vnitřní kruh — sbor", desc: "Ve sboru se duchově rosteš přes studium, modlitbu a shromáždění. Cílem je Ráj." },
     { emoji: "🍇", title: "Ovoce ducha",         desc: "Za každou dobrou akci získáváš ovoce ducha. Na konci dostaneš unikátní titul!" },
     { emoji: "🎲", title: "Divoké karty",        desc: "Během hry mohou přijít překvapivé divoké karty — připrav se na nečekané!" },
   ];
