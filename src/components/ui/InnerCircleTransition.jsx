@@ -323,7 +323,7 @@ const InnerCircleTransition = ({ player, onDone }) => {
                     color: "#f5d76e", letterSpacing: 1,
                   }}
                 >
-                  ⛪ NOVÝ ČLEN SBORU
+                  🌿 NOVÝ ČLEN SBORU
                 </motion.div>
               </motion.div>
             )}
