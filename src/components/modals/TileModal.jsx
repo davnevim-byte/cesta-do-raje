@@ -55,7 +55,7 @@ const TYPE_CONFIG = {
     skipColor: null,
   },
   entry: {
-    emoji:   "⛪",
+    emoji:   "🏘️",
     title:   "Vstup do sboru",
     bg:      "#0d0a03",
     accent:  "#EF9F27",
