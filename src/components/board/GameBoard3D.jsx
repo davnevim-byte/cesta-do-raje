@@ -424,6 +424,27 @@ const ParadiseCenter = () => {
 
 
 
+// ─── Konfigurace avatarů pro 3D figurky ──────────────────────
+// Každý avatar má unikátní: barva oblečení, vlasy, pleť, doplněk
+const AVATAR_3D_CONFIG = {
+  AVATAR01: { skin:"#e8b89a", hair:"#2c1810", cloth:"#1D9E75", acc:"tie",    gender:"M" },
+  AVATAR02: { skin:"#f0c8a0", hair:"#f5c842", cloth:"#9B59B6", acc:"braid",  gender:"F" },
+  AVATAR03: { skin:"#c8955a", hair:"#1a0f08", cloth:"#27AE60", acc:"cap",    gender:"M" },
+  AVATAR04: { skin:"#fad4b0", hair:"#8b2040", cloth:"#E74C3C", acc:"bow",    gender:"F" },
+  AVATAR05: { skin:"#d4a070", hair:"#3a2010", cloth:"#2980B9", acc:"collar", gender:"M" },
+  AVATAR06: { skin:"#f5d0a8", hair:"#6b3020", cloth:"#E67E22", acc:"bun",    gender:"F" },
+  AVATAR07: { skin:"#c07848", hair:"#0a0808", cloth:"#8E44AD", acc:"beard",  gender:"M" },
+  AVATAR08: { skin:"#fae0c0", hair:"#303030", cloth:"#2471A3", acc:"curls",  gender:"F" },
+  AVATAR09: { skin:"#b86830", hair:"#180808", cloth:"#C0392B", acc:"tie",    gender:"M" },
+  AVATAR10: { skin:"#f0c090", hair:"#4a1828", cloth:"#76448A", acc:"bow",    gender:"F" },
+  AVATAR11: { skin:"#d89060", hair:"#203820", cloth:"#1E8449", acc:"collar", gender:"M" },
+  AVATAR12: { skin:"#fce8d0", hair:"#101828", cloth:"#1A5276", acc:"braid",  gender:"F" },
+};
+
+// Fallback pokud avatarId není v mapě
+const getAvatarCfg = (avatarId) =>
+  AVATAR_3D_CONFIG[avatarId] ?? AVATAR_3D_CONFIG.AVATAR01;
+
 // ─── 3D figurka hráče ─────────────────────────────────────────
 // Anatomie: základna → tělo → ramena → krk → hlava → výraz
 // Emoce: idle dýchání, skok při pohybu, třes při negativním,
@@ -505,124 +526,301 @@ const PlayerFigurine = ({
     }
   });
 
+  const cfg = getAvatarCfg(player.avatarId);
   const emissiveInt = isActive ? 0.45 : 0.12;
-  const darkColor   = color;
+  const isFemale = cfg.gender === "F";
 
   return (
     <group ref={groupRef} position={finalPos}>
-      {/* Záře pod figurkou */}
+      {/* Pulzující záře pod figurkou */}
       <pointLight
         ref={glowRef}
-        position={[0, 0.15, 0]}
+        position={[0, 0.2, 0]}
         color={color}
-        intensity={isActive ? 1.2 : 0.15}
-        distance={1.6}
+        intensity={isActive ? 1.4 : 0.18}
+        distance={1.8}
       />
-
-      {/* Kruhový stín na desce */}
-      <mesh position={[0, 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[isActive ? 0.28 : 0.22, 20]} />
-        <meshBasicMaterial color="black" transparent opacity={isActive ? 0.5 : 0.3} />
+      {/* Prstencová záře na zemi */}
+      <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[isActive ? 0.22 : 0.16, isActive ? 0.32 : 0.24, 24]} />
+        <meshBasicMaterial color={color} transparent opacity={isActive ? 0.55 : 0.18} />
+      </mesh>
+      {/* Stín */}
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[isActive ? 0.26 : 0.20, 20]} />
+        <meshBasicMaterial color="black" transparent opacity={isActive ? 0.45 : 0.22} />
       </mesh>
 
-      {/* Celé tělo — animovaná skupina */}
+      {/* Celé tělo */}
       <group ref={rootRef}>
-        <group ref={bodyRef} position={[0, 0.08, 0]}>
+        <group ref={bodyRef} position={[0, 0.06, 0]}>
 
-          {/* Základna / boty */}
-          <mesh position={[0, 0, 0]}>
-            <cylinderGeometry args={[0.15, 0.17, 0.1, 10]} />
-            <meshStandardMaterial color="#111" roughness={0.8} />
+          {/* ── BOTY ── */}
+          <mesh position={[-0.075, 0.04, 0.02]}>
+            <boxGeometry args={[0.10, 0.08, 0.14]} />
+            <meshStandardMaterial color="#1a1010" roughness={0.9} />
+          </mesh>
+          <mesh position={[0.075, 0.04, 0.02]}>
+            <boxGeometry args={[0.10, 0.08, 0.14]} />
+            <meshStandardMaterial color="#1a1010" roughness={0.9} />
           </mesh>
 
-          {/* Nohy */}
-          <mesh position={[-0.08, 0.24, 0]}>
-            <cylinderGeometry args={[0.06, 0.07, 0.3, 8]} />
-            <meshStandardMaterial color={color} roughness={0.65}
-              emissive={color} emissiveIntensity={emissiveInt * 0.4} />
+          {/* ── NOHY ── */}
+          <mesh position={[-0.075, 0.25, 0]}>
+            <cylinderGeometry args={[0.058, 0.065, 0.32, 10]} />
+            <meshStandardMaterial
+              color={isFemale ? cfg.cloth : "#2a2a2a"}
+              roughness={0.75}
+              emissive={isFemale ? cfg.cloth : "#111"}
+              emissiveIntensity={isFemale ? emissiveInt * 0.3 : 0.05}
+            />
           </mesh>
-          <mesh position={[0.08, 0.24, 0]}>
-            <cylinderGeometry args={[0.06, 0.07, 0.3, 8]} />
-            <meshStandardMaterial color={color} roughness={0.65}
-              emissive={color} emissiveIntensity={emissiveInt * 0.4} />
+          <mesh position={[0.075, 0.25, 0]}>
+            <cylinderGeometry args={[0.058, 0.065, 0.32, 10]} />
+            <meshStandardMaterial
+              color={isFemale ? cfg.cloth : "#2a2a2a"}
+              roughness={0.75}
+              emissive={isFemale ? cfg.cloth : "#111"}
+              emissiveIntensity={isFemale ? emissiveInt * 0.3 : 0.05}
+            />
           </mesh>
 
-          {/* Trup */}
-          <mesh position={[0, 0.52, 0]}>
-            <cylinderGeometry args={[0.16, 0.14, 0.38, 12]} />
-            <meshStandardMaterial color={color} roughness={0.5} metalness={0.15}
-              emissive={color} emissiveIntensity={emissiveInt} />
+          {/* ── TRUP ── chibi styl - trochu širší dole */}
+          <mesh position={[0, 0.54, 0]}>
+            <cylinderGeometry args={[0.17, 0.15, 0.42, 14]} />
+            <meshStandardMaterial
+              color={cfg.cloth}
+              roughness={0.5} metalness={0.08}
+              emissive={cfg.cloth}
+              emissiveIntensity={emissiveInt}
+            />
           </mesh>
 
-          {/* Levé rameno + paže */}
-          <group ref={lArmRef} position={[-0.20, 0.62, 0]} rotation={[0, 0, -0.3]}>
-            <mesh position={[0, -0.11, 0]}>
-              <cylinderGeometry args={[0.05, 0.055, 0.25, 8]} />
-              <meshStandardMaterial color={color} roughness={0.6}
-                emissive={color} emissiveIntensity={emissiveInt * 0.5} />
+          {/* Detailní límec */}
+          <mesh position={[0, 0.74, 0]}>
+            <cylinderGeometry args={[0.10, 0.12, 0.06, 12]} />
+            <meshStandardMaterial color={cfg.skin} roughness={0.7} />
+          </mesh>
+
+          {/* Doplněk na trup */}
+          {cfg.acc === "tie" && (
+            <mesh position={[0, 0.58, 0.16]}>
+              <boxGeometry args={[0.04, 0.22, 0.02]} />
+              <meshStandardMaterial color="#c0392b" roughness={0.6} />
+            </mesh>
+          )}
+          {cfg.acc === "collar" && (
+            <mesh position={[0, 0.70, 0.12]}>
+              <torusGeometry args={[0.09, 0.018, 6, 12, Math.PI]} />
+              <meshStandardMaterial color="white" roughness={0.5} />
+            </mesh>
+          )}
+
+          {/* ── LEVÁ RUKA ── */}
+          <group ref={lArmRef} position={[-0.22, 0.65, 0]} rotation={[0, 0, -0.28]}>
+            {/* Rameno */}
+            <mesh position={[0, -0.06, 0]}>
+              <sphereGeometry args={[0.068, 10, 10]} />
+              <meshStandardMaterial color={cfg.cloth} roughness={0.55}
+                emissive={cfg.cloth} emissiveIntensity={emissiveInt * 0.4} />
+            </mesh>
+            {/* Paže */}
+            <mesh position={[0, -0.18, 0]}>
+              <cylinderGeometry args={[0.048, 0.055, 0.22, 9]} />
+              <meshStandardMaterial color={cfg.cloth} roughness={0.55}
+                emissive={cfg.cloth} emissiveIntensity={emissiveInt * 0.4} />
+            </mesh>
+            {/* Ruka */}
+            <mesh position={[0, -0.32, 0]}>
+              <sphereGeometry args={[0.055, 9, 9]} />
+              <meshStandardMaterial color={cfg.skin} roughness={0.65} />
             </mesh>
           </group>
 
-          {/* Pravé rameno + paže */}
-          <group ref={rArmRef} position={[0.20, 0.62, 0]} rotation={[0, 0, 0.3]}>
-            <mesh position={[0, -0.11, 0]}>
-              <cylinderGeometry args={[0.05, 0.055, 0.25, 8]} />
-              <meshStandardMaterial color={color} roughness={0.6}
-                emissive={color} emissiveIntensity={emissiveInt * 0.5} />
+          {/* ── PRAVÁ RUKA ── */}
+          <group ref={rArmRef} position={[0.22, 0.65, 0]} rotation={[0, 0, 0.28]}>
+            <mesh position={[0, -0.06, 0]}>
+              <sphereGeometry args={[0.068, 10, 10]} />
+              <meshStandardMaterial color={cfg.cloth} roughness={0.55}
+                emissive={cfg.cloth} emissiveIntensity={emissiveInt * 0.4} />
+            </mesh>
+            <mesh position={[0, -0.18, 0]}>
+              <cylinderGeometry args={[0.048, 0.055, 0.22, 9]} />
+              <meshStandardMaterial color={cfg.cloth} roughness={0.55}
+                emissive={cfg.cloth} emissiveIntensity={emissiveInt * 0.4} />
+            </mesh>
+            <mesh position={[0, -0.32, 0]}>
+              <sphereGeometry args={[0.055, 9, 9]} />
+              <meshStandardMaterial color={cfg.skin} roughness={0.65} />
             </mesh>
           </group>
 
-          {/* Krk */}
-          <mesh position={[0, 0.78, 0]}>
-            <cylinderGeometry args={[0.06, 0.07, 0.12, 8]} />
-            <meshStandardMaterial color="#d4a574" roughness={0.7} />
+          {/* ── KRČEK ── */}
+          <mesh position={[0, 0.80, 0]}>
+            <cylinderGeometry args={[0.062, 0.070, 0.10, 10]} />
+            <meshStandardMaterial color={cfg.skin} roughness={0.65} />
           </mesh>
 
-          {/* Hlava */}
-          <group ref={headRef} position={[0, 0.96, 0]}>
+          {/* ── HLAVA — chibi velká hlava ── */}
+          <group ref={headRef} position={[0, 1.02, 0]}>
+
+            {/* Lebka — trochu oválná */}
             <mesh>
-              <sphereGeometry args={[0.22, 16, 16]} />
-              <meshStandardMaterial color="#e8c09a" roughness={0.6}
-                emissive={color} emissiveIntensity={emissiveInt * 0.2} />
+              <sphereGeometry args={[0.26, 18, 18]} />
+              <meshStandardMaterial
+                color={cfg.skin} roughness={0.58}
+                emissive={cfg.cloth} emissiveIntensity={emissiveInt * 0.12}
+              />
             </mesh>
 
-            {/* Oči */}
-            <mesh position={[-0.08, 0.05, 0.19]}>
-              <sphereGeometry args={[0.032, 8, 8]} />
-              <meshBasicMaterial color="#1a0800" />
+            {/* Lícní kosti — jemné */}
+            <mesh position={[-0.16, -0.06, 0.15]}>
+              <sphereGeometry args={[0.06, 8, 8]} />
+              <meshStandardMaterial color={cfg.skin} roughness={0.7} transparent opacity={0.5} />
             </mesh>
-            <mesh position={[0.08, 0.05, 0.19]}>
-              <sphereGeometry args={[0.032, 8, 8]} />
-              <meshBasicMaterial color="#1a0800" />
-            </mesh>
-            {/* Bílé oči */}
-            <mesh position={[-0.08, 0.05, 0.185]}>
-              <sphereGeometry args={[0.048, 8, 8]} />
-              <meshBasicMaterial color="white" />
-            </mesh>
-            <mesh position={[0.08, 0.05, 0.185]}>
-              <sphereGeometry args={[0.048, 8, 8]} />
-              <meshBasicMaterial color="white" />
+            <mesh position={[0.16, -0.06, 0.15]}>
+              <sphereGeometry args={[0.06, 8, 8]} />
+              <meshStandardMaterial color={cfg.skin} roughness={0.7} transparent opacity={0.5} />
             </mesh>
 
-            {/* Výraz */}
+            {/* ── OČI — bílé + barevná duhovka + zornice ── */}
+            {[[-0.095, 0.06, 0.22], [0.095, 0.06, 0.22]].map(([x, y, z], i) => (
+              <group key={i} position={[x, y, z]}>
+                {/* Bílé */}
+                <mesh>
+                  <sphereGeometry args={[0.055, 10, 10]} />
+                  <meshBasicMaterial color="white" />
+                </mesh>
+                {/* Barevná duhovka */}
+                <mesh position={[0, 0, 0.03]}>
+                  <circleGeometry args={[0.033, 12]} />
+                  <meshBasicMaterial color={color} />
+                </mesh>
+                {/* Zornice */}
+                <mesh position={[0, 0, 0.04]}>
+                  <circleGeometry args={[0.018, 10]} />
+                  <meshBasicMaterial color="#0a0408" />
+                </mesh>
+                {/* Lesk */}
+                <mesh position={[0.012, 0.014, 0.045]}>
+                  <circleGeometry args={[0.008, 6]} />
+                  <meshBasicMaterial color="white" />
+                </mesh>
+              </group>
+            ))}
+
+            {/* ── OBOČÍ ── */}
+            <mesh position={[-0.095, 0.125, 0.22]} rotation={[0, 0, 0.15]}>
+              <boxGeometry args={[0.07, 0.016, 0.01]} />
+              <meshBasicMaterial color={cfg.hair} />
+            </mesh>
+            <mesh position={[0.095, 0.125, 0.22]} rotation={[0, 0, -0.15]}>
+              <boxGeometry args={[0.07, 0.016, 0.01]} />
+              <meshBasicMaterial color={cfg.hair} />
+            </mesh>
+
+            {/* ── ÚSTA — dle emoce ── */}
             {(emotion === "cheer" || emotion === "jump") && (
-              <mesh position={[0, -0.05, 0.20]} rotation={[0, 0, Math.PI]}>
-                <torusGeometry args={[0.06, 0.013, 6, 10, Math.PI]} />
-                <meshBasicMaterial color="#c08060" />
-              </mesh>
+              <>
+                {/* Velký úsměv */}
+                <mesh position={[0, -0.06, 0.24]} rotation={[0, 0, Math.PI]}>
+                  <torusGeometry args={[0.07, 0.016, 8, 12, Math.PI]} />
+                  <meshBasicMaterial color="#c07050" />
+                </mesh>
+                {/* Zuby */}
+                <mesh position={[0, -0.062, 0.245]}>
+                  <boxGeometry args={[0.09, 0.022, 0.01]} />
+                  <meshBasicMaterial color="white" />
+                </mesh>
+              </>
             )}
             {emotion === "shake" && (
-              <mesh position={[0, -0.07, 0.20]}>
-                <torusGeometry args={[0.06, 0.013, 6, 10, Math.PI]} />
-                <meshBasicMaterial color="#c08060" />
+              <mesh position={[0, -0.08, 0.24]}>
+                <torusGeometry args={[0.06, 0.015, 8, 10, Math.PI]} />
+                <meshBasicMaterial color="#c07050" />
               </mesh>
             )}
-            {emotion !== "cheer" && emotion !== "jump" && emotion !== "shake" && (
-              <mesh position={[0, -0.04, 0.20]} rotation={[0, 0, Math.PI]}>
-                <torusGeometry args={[0.045, 0.010, 6, 8, Math.PI * 0.7]} />
-                <meshBasicMaterial color="#c08060" />
+            {(emotion === "idle" || emotion === "lean") && (
+              <mesh position={[0, -0.055, 0.24]} rotation={[0, 0, Math.PI]}>
+                <torusGeometry args={[0.05, 0.012, 6, 10, Math.PI * 0.65]} />
+                <meshBasicMaterial color="#c07050" />
               </mesh>
+            )}
+
+            {/* ── VLASY — unikátní dle avatara ── */}
+            {/* Základní cap vlasů */}
+            <mesh position={[0, 0.16, -0.04]} rotation={[-0.2, 0, 0]}>
+              <sphereGeometry args={[0.265, 14, 14, 0, Math.PI * 2, 0, Math.PI * 0.55]} />
+              <meshStandardMaterial color={cfg.hair} roughness={0.8} />
+            </mesh>
+
+            {/* Doplněk — cop pro ženy */}
+            {cfg.acc === "braid" && (
+              <>
+                <mesh position={[0, 0.1, -0.26]} rotation={[-0.3, 0, 0]}>
+                  <cylinderGeometry args={[0.038, 0.022, 0.38, 8]} />
+                  <meshStandardMaterial color={cfg.hair} roughness={0.8} />
+                </mesh>
+                <mesh position={[0, -0.06, -0.38]} rotation={[-0.1, 0, 0]}>
+                  <sphereGeometry args={[0.045, 8, 8]} />
+                  <meshStandardMaterial color={cfg.hair} roughness={0.8} />
+                </mesh>
+              </>
+            )}
+            {/* Drdol */}
+            {cfg.acc === "bun" && (
+              <mesh position={[0, 0.27, -0.12]}>
+                <sphereGeometry args={[0.07, 10, 10]} />
+                <meshStandardMaterial color={cfg.hair} roughness={0.75} />
+              </mesh>
+            )}
+            {/* Kudrny */}
+            {cfg.acc === "curls" && (
+              <>
+                <mesh position={[-0.18, 0.0, -0.1]}>
+                  <sphereGeometry args={[0.065, 8, 8]} />
+                  <meshStandardMaterial color={cfg.hair} roughness={0.8} />
+                </mesh>
+                <mesh position={[0.18, 0.0, -0.1]}>
+                  <sphereGeometry args={[0.065, 8, 8]} />
+                  <meshStandardMaterial color={cfg.hair} roughness={0.8} />
+                </mesh>
+              </>
+            )}
+            {/* Kšiltovka */}
+            {cfg.acc === "cap" && (
+              <>
+                <mesh position={[0, 0.22, 0]}>
+                  <cylinderGeometry args={[0.20, 0.22, 0.1, 12]} />
+                  <meshStandardMaterial color={color} roughness={0.6}
+                    emissive={color} emissiveIntensity={0.1} />
+                </mesh>
+                <mesh position={[0, 0.21, 0.22]} rotation={[-0.2, 0, 0]}>
+                  <cylinderGeometry args={[0.13, 0.13, 0.04, 10]} />
+                  <meshStandardMaterial color={color} roughness={0.6} />
+                </mesh>
+              </>
+            )}
+            {/* Vous */}
+            {cfg.acc === "beard" && (
+              <mesh position={[0, -0.14, 0.18]}>
+                <sphereGeometry args={[0.075, 10, 10]} />
+                <meshStandardMaterial color={cfg.hair} roughness={0.85}
+                  transparent opacity={0.9} />
+              </mesh>
+            )}
+            {/* Mašle */}
+            {cfg.acc === "bow" && (
+              <>
+                <mesh position={[-0.08, 0.28, 0.1]} rotation={[0, 0, 0.5]}>
+                  <torusGeometry args={[0.04, 0.015, 6, 8, Math.PI * 1.2]} />
+                  <meshStandardMaterial color={cfg.cloth} roughness={0.6} />
+                </mesh>
+                <mesh position={[0.08, 0.28, 0.1]} rotation={[0, 0, -0.5]}>
+                  <torusGeometry args={[0.04, 0.015, 6, 8, Math.PI * 1.2]} />
+                  <meshStandardMaterial color={cfg.cloth} roughness={0.6} />
+                </mesh>
+              </>
             )}
 
             {/* Jméno jako billboard */}
