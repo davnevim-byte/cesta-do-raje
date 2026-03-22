@@ -683,27 +683,17 @@ const PlayerFigurine = ({
               <meshStandardMaterial color={cfg.skin} roughness={0.7} transparent opacity={0.5} />
             </mesh>
 
-            {/* ── OČI — bílé + barevná duhovka + zornice ── */}
-            {[[-0.095, 0.06, 0.22], [0.095, 0.06, 0.22]].map(([x, y, z], i) => (
+            {/* ── OČI — jednoduché, roztomilé ── */}
+            {[[-0.088, 0.06, 0.235], [0.088, 0.06, 0.235]].map(([x, y, z], i) => (
               <group key={i} position={[x, y, z]}>
-                {/* Bílé */}
+                {/* Tmavá koule — jednoduché oko */}
                 <mesh>
-                  <sphereGeometry args={[0.055, 10, 10]} />
-                  <meshBasicMaterial color="white" />
+                  <sphereGeometry args={[0.038, 10, 10]} />
+                  <meshBasicMaterial color="#1a0f0a" />
                 </mesh>
-                {/* Barevná duhovka */}
-                <mesh position={[0, 0, 0.03]}>
-                  <circleGeometry args={[0.033, 12]} />
-                  <meshBasicMaterial color={color} />
-                </mesh>
-                {/* Zornice */}
-                <mesh position={[0, 0, 0.04]}>
-                  <circleGeometry args={[0.018, 10]} />
-                  <meshBasicMaterial color="#0a0408" />
-                </mesh>
-                {/* Lesk */}
-                <mesh position={[0.012, 0.014, 0.045]}>
-                  <circleGeometry args={[0.008, 6]} />
+                {/* Malý lesk */}
+                <mesh position={[0.014, 0.016, 0.032]}>
+                  <circleGeometry args={[0.010, 6]} />
                   <meshBasicMaterial color="white" />
                 </mesh>
               </group>
