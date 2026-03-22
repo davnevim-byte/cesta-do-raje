@@ -53,24 +53,37 @@ const AvatarPicker = ({ value, onChange, playerName }) => {
       {/* Galerie avatarů */}
       <AnimatePresence>
         {open && (
+          <>
+          {/* Overlay - klik mimo zavře */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 4 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
+            style={{
+              position: "fixed", inset: 0,
+              zIndex: 499,
+              background: "rgba(0,0,0,0.5)",
+            }}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.92 }}
             transition={{ duration: 0.2 }}
             style={{
-              position:       "absolute",
-              top:            "calc(100% + 10px)",
+              position:       "fixed",
+              top:            "50%",
               left:           "50%",
-              transform:      "translateX(-50%)",
-              zIndex:         200,
-              background:     "rgba(6,8,16,0.97)",
-              border:         "1px solid rgba(255,255,255,0.1)",
-              borderRadius:   14,
-              padding:        12,
-              width:          240,
-              backdropFilter: "blur(16px)",
-              boxShadow:      "0 20px 60px rgba(0,0,0,0.8)",
+              transform:      "translate(-50%, -50%)",
+              zIndex:         1000,
+              background:     "rgba(6,8,16,0.98)",
+              border:         "1px solid rgba(255,255,255,0.12)",
+              borderRadius:   16,
+              padding:        14,
+              width:          "min(280px, 90vw)",
+              backdropFilter: "blur(20px)",
+              boxShadow:      "0 20px 60px rgba(0,0,0,0.9)",
             }}
           >
             <div style={{
@@ -163,6 +176,7 @@ const AvatarPicker = ({ value, onChange, playerName }) => {
               Zavřít
             </button>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
