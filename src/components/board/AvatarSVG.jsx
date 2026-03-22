@@ -1,319 +1,448 @@
-// ============================================================
-//  AvatarSVG — 12 unikátních SVG avatarů
-//  Každý má vlastní osobnost, barvu vlasů, tón pleti
-//  Žádné externí obrázky — vše je vektorová grafika
-// ============================================================
+// AvatarSVG - 12 unikatnich avataru odpovidajicich 3D figurkam
 
-// Pomocná komponenta pro každý avatar
-const AvatarBase = ({ size = 56, bg, children }) => (
-  <svg
-    width={size} height={size}
-    viewBox="0 0 56 56"
+// Avatar 01 - Marek
+export const Avatar01 = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 56 56"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ borderRadius: "50%", flexShrink: 0, display: "block" }}
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
   >
-    {/* Pozadí */}
-    <circle cx="28" cy="28" r="28" fill={bg} />
-    {children}
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#1D9E75" />
+    <polygon points="28,34 26,44 28,42 30,44" fill="#c0392b" />
+    <rect x="18" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/><rect x="30" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/>
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#e8b89a" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#1D9E75" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#1D9E75" />
+    <circle cx="14" cy="47" r="4" fill="#e8b89a" />
+    <circle cx="42" cy="47" r="4" fill="#e8b89a" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#e8b89a" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#2c1810" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#2c1810" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#2c1810" />
+    
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#1D9E75" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#1D9E75" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#2c1810" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#2c1810" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
   </svg>
 );
 
-// ─── Avatar 01 — Marek (tmavé vlasy, oblek) ─────────────────
-export const Avatar01 = ({ size }) => (
-  <AvatarBase size={size} bg="#1a2a3a">
-    {/* Tělo */}
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#1e3a5f" />
-    {/* Košile + kravata */}
-    <rect x="24" y="36" width="8" height="10" fill="white" rx="1" />
-    <polygon points="28,37 26,44 28,43 30,44" fill="#c0392b" />
-    {/* Oblek */}
-    <path d="M12 56 Q14 38 22 36 L24 40 L28 38 L32 40 L34 36 Q42 38 44 56Z" fill="#2c3e50" />
-    {/* Krk */}
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#e8b89a" />
-    {/* Hlava */}
-    <ellipse cx="28" cy="24" rx="11" ry="12" fill="#e8b89a" />
-    {/* Vlasy */}
-    <path d="M17 22 Q18 12 28 11 Q38 12 39 22 Q36 14 28 14 Q20 14 17 22Z" fill="#2c1810" />
-    {/* Oči */}
-    <ellipse cx="23" cy="23" rx="2" ry="2.2" fill="white" />
-    <ellipse cx="33" cy="23" rx="2" ry="2.2" fill="white" />
-    <circle cx="23.5" cy="23.5" r="1.3" fill="#1a0a00" />
-    <circle cx="33.5" cy="23.5" r="1.3" fill="#1a0a00" />
-    {/* Úsměv */}
-    <path d="M23 29 Q28 33 33 29" stroke="#c0856a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-  </AvatarBase>
-);
-
-// ─── Avatar 02 — Jana (světlé vlasy, bílá halenka) ──────────
+// Avatar 02 - Jana
 export const Avatar02 = ({ size }) => (
-  <AvatarBase size={size} bg="#1a1a2e">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#8e44ad" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#6c3483" />
-    <rect x="23" y="35" width="10" height="12" fill="#f8f9fa" rx="2" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#fad5b5" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#fad5b5" />
-    {/* Světlé vlasy */}
-    <path d="M17 20 Q17 10 28 10 Q39 10 39 20" fill="#f0c040" />
-    <path d="M17 20 Q16 26 17 30 Q18 26 17 20Z" fill="#f0c040" />
-    <path d="M39 20 Q40 26 39 30 Q40 26 39 20Z" fill="#f0c040" />
-    <ellipse cx="28" cy="13" rx="11" ry="4" fill="#f0c040" />
-    <ellipse cx="23" cy="22" rx="1.8" ry="2" fill="white" />
-    <ellipse cx="33" cy="22" rx="1.8" ry="2" fill="white" />
-    <circle cx="23.5" cy="22.5" r="1.2" fill="#3d2b1f" />
-    <circle cx="33.5" cy="22.5" r="1.2" fill="#3d2b1f" />
-    {/* Řasy */}
-    <path d="M21 20 L22 18.5 M23 19.5 L23 18 M25 20 L25.5 18.5" stroke="#3d2b1f" strokeWidth="0.7" />
-    <path d="M31 20 L31.5 18.5 M33 19.5 L33 18 M35 20 L34.5 18.5" stroke="#3d2b1f" strokeWidth="0.7" />
-    <path d="M23 28 Q28 32 33 28" stroke="#c9826a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#9B59B6" />
+    
+    <path d="M16 56 Q18 44 22 42 L28 44 L34 42 Q38 44 40 56Z" fill="#9B59B6" />
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#f0c8a0" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#9B59B6" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#9B59B6" />
+    <circle cx="14" cy="47" r="4" fill="#f0c8a0" />
+    <circle cx="42" cy="47" r="4" fill="#f0c8a0" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#f0c8a0" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#f5c842" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#f5c842" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#f5c842" />
+    <rect x="24" y="32" width="6" height="18" rx="3" fill="#f5c842" />
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#9B59B6" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#9B59B6" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#f5c842" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#f5c842" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 03 — Tomáš (hnědé vlasy, brýle) ─────────────────
+// Avatar 03 - Tomas
 export const Avatar03 = ({ size }) => (
-  <AvatarBase size={size} bg="#0d1f0d">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#1e4d1e" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#145214" />
-    <rect x="23" y="35" width="10" height="12" fill="white" rx="1" />
-    <polygon points="28,36 26,43 28,42 30,43" fill="#2980b9" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#d4a574" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#d4a574" />
-    <path d="M17 21 Q18 11 28 11 Q38 11 39 21 Q36 13 28 13 Q20 13 17 21Z" fill="#6b3a1f" />
-    {/* Brýle */}
-    <rect x="19" y="21" width="7" height="5" rx="2" fill="none" stroke="#444" strokeWidth="1.2" />
-    <rect x="30" y="21" width="7" height="5" rx="2" fill="none" stroke="#444" strokeWidth="1.2" />
-    <line x1="26" y1="23.5" x2="30" y2="23.5" stroke="#444" strokeWidth="1.2" />
-    <line x1="17" y1="23" x2="19" y2="23.5" stroke="#444" strokeWidth="1" />
-    <line x1="39" y1="23" x2="37" y2="23.5" stroke="#444" strokeWidth="1" />
-    <circle cx="22.5" cy="23.5" r="1" fill="#3d2b1f" />
-    <circle cx="33.5" cy="23.5" r="1" fill="#3d2b1f" />
-    <path d="M23 29 Q28 33 33 29" stroke="#b07a5a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#27AE60" />
+    
+    <rect x="18" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/><rect x="30" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/>
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#c8955a" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#27AE60" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#27AE60" />
+    <circle cx="14" cy="47" r="4" fill="#c8955a" />
+    <circle cx="42" cy="47" r="4" fill="#c8955a" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#c8955a" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#1a0f08" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#1a0f08" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#1a0f08" />
+    <rect x="16" y="12" width="24" height="8" rx="2" fill="#27AE60" /><rect x="12" y="18" width="32" height="4" rx="2" fill="#27AE60" />
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#27AE60" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#27AE60" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#1a0f08" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#1a0f08" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 04 — Lucie (tmavé vlasy, červené puntíky) ───────
+// Avatar 04 - Lucie
 export const Avatar04 = ({ size }) => (
-  <AvatarBase size={size} bg="#2d0a0a">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#922b21" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#7b241c" />
-    <rect x="23" y="35" width="10" height="12" fill="#fadbd8" rx="2" />
-    <circle cx="25" cy="38" r="1" fill="#e74c3c" />
-    <circle cx="28" cy="37" r="1" fill="#e74c3c" />
-    <circle cx="31" cy="38" r="1" fill="#e74c3c" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#f5cba7" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#f5cba7" />
-    {/* Vlnité tmavé vlasy */}
-    <path d="M17 22 Q17 10 28 10 Q39 10 39 22" fill="#1a0a00" />
-    <path d="M17 22 Q15 28 16 34 Q18 28 17 22Z" fill="#1a0a00" />
-    <path d="M39 22 Q41 28 40 34 Q38 28 39 22Z" fill="#1a0a00" />
-    <path d="M17 14 Q20 10 25 12 Q20 14 17 14Z" fill="#1a0a00" />
-    <ellipse cx="28" cy="11" rx="11" ry="3.5" fill="#1a0a00" />
-    <ellipse cx="23" cy="22" rx="1.8" ry="2" fill="white" />
-    <ellipse cx="33" cy="22" rx="1.8" ry="2" fill="white" />
-    <circle cx="23.5" cy="22.5" r="1.2" fill="#1a0a00" />
-    <circle cx="33.5" cy="22.5" r="1.2" fill="#1a0a00" />
-    <path d="M23 29 Q28 32 33 29" stroke="#d4826a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-    {/* Naušnice */}
-    <circle cx="17" cy="26" r="1.5" fill="#f39c12" />
-    <circle cx="39" cy="26" r="1.5" fill="#f39c12" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#E74C3C" />
+    
+    <path d="M16 56 Q18 44 22 42 L28 44 L34 42 Q38 44 40 56Z" fill="#E74C3C" />
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#fad4b0" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#E74C3C" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#E74C3C" />
+    <circle cx="14" cy="47" r="4" fill="#fad4b0" />
+    <circle cx="42" cy="47" r="4" fill="#fad4b0" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#fad4b0" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#8b2040" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#8b2040" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#8b2040" />
+    <path d="M20 12 Q22 8 24 12 Q22 14 20 12Z" fill="#E74C3C" /><path d="M32 12 Q34 8 36 12 Q34 14 32 12Z" fill="#E74C3C" />
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#E74C3C" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#E74C3C" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#8b2040" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#8b2040" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 05 — Pavel (šedé vlasy, starší) ─────────────────
+// Avatar 05 - Pavel
 export const Avatar05 = ({ size }) => (
-  <AvatarBase size={size} bg="#1a1a3a">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#2c3e7a" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#1a2560" />
-    <rect x="23" y="35" width="10" height="12" fill="white" rx="1" />
-    <polygon points="28,36 26,43 28,42 30,43" fill="#8e44ad" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#d4a574" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#d4a574" />
-    {/* Šedé vlasy */}
-    <path d="M17 22 Q18 11 28 11 Q38 11 39 22 Q36 14 28 14 Q20 14 17 22Z" fill="#95a5a6" />
-    {/* Vous */}
-    <path d="M21 30 Q28 35 35 30 Q33 34 28 35 Q23 34 21 30Z" fill="#bdc3c7" />
-    <ellipse cx="23" cy="23" rx="2" ry="2.2" fill="white" />
-    <ellipse cx="33" cy="23" rx="2" ry="2.2" fill="white" />
-    <circle cx="23.5" cy="23.5" r="1.3" fill="#2c1810" />
-    <circle cx="33.5" cy="23.5" r="1.3" fill="#2c1810" />
-    <path d="M23 29 Q28 32 33 29" stroke="#c0856a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#2980B9" />
+    <path d="M22 34 Q28 37 34 34" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="18" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/><rect x="30" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/>
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#d4a070" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#2980B9" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#2980B9" />
+    <circle cx="14" cy="47" r="4" fill="#d4a070" />
+    <circle cx="42" cy="47" r="4" fill="#d4a070" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#d4a070" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#3a2010" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#3a2010" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#3a2010" />
+    
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#2980B9" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#2980B9" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#3a2010" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#3a2010" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 06 — Marie (rusé vlasy, uzel) ───────────────────
+// Avatar 06 - Marie
 export const Avatar06 = ({ size }) => (
-  <AvatarBase size={size} bg="#0d1a0d">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#196f3d" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#0e4d29" />
-    <rect x="23" y="35" width="10" height="12" fill="#d5f5e3" rx="2" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#fad5b5" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#fad5b5" />
-    {/* Rusé vlasy do uzlu */}
-    <path d="M17 22 Q17 10 28 10 Q39 10 39 22 Q36 14 28 14 Q20 14 17 22Z" fill="#e67e22" />
-    {/* Uzel nahoře */}
-    <circle cx="28" cy="10" r="5" fill="#e67e22" />
-    <ellipse cx="28" cy="10" rx="4" ry="3" fill="#d35400" />
-    <ellipse cx="23" cy="22" rx="1.8" ry="2" fill="white" />
-    <ellipse cx="33" cy="22" rx="1.8" ry="2" fill="white" />
-    <circle cx="23.5" cy="22.5" r="1.2" fill="#1a0a00" />
-    <circle cx="33.5" cy="22.5" r="1.2" fill="#1a0a00" />
-    <path d="M23 29 Q28 33 33 29" stroke="#c9826a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-    {/* Pihy */}
-    <circle cx="25" cy="27" r="0.7" fill="#d4926a" />
-    <circle cx="27" cy="26.5" r="0.7" fill="#d4926a" />
-    <circle cx="29" cy="27" r="0.7" fill="#d4926a" />
-    <circle cx="31" cy="26.5" r="0.7" fill="#d4926a" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#E67E22" />
+    
+    <path d="M16 56 Q18 44 22 42 L28 44 L34 42 Q38 44 40 56Z" fill="#E67E22" />
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#f5d0a8" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#E67E22" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#E67E22" />
+    <circle cx="14" cy="47" r="4" fill="#f5d0a8" />
+    <circle cx="42" cy="47" r="4" fill="#f5d0a8" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#f5d0a8" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#6b3020" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#6b3020" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#6b3020" />
+    <circle cx="28" cy="8" r="5" fill="#6b3020" />
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#E67E22" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#E67E22" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#6b3020" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#6b3020" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 07 — David (tmavá pleť, krátké vlasy) ───────────
+// Avatar 07 - David
 export const Avatar07 = ({ size }) => (
-  <AvatarBase size={size} bg="#1a0d2e">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#6c3483" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#512e81" />
-    <rect x="23" y="35" width="10" height="12" fill="white" rx="1" />
-    <polygon points="28,36 26,43 28,42 30,43" fill="#1abc9c" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#8d5524" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#8d5524" />
-    {/* Krátké kudrnaté vlasy */}
-    <path d="M17 22 Q18 11 28 11 Q38 11 39 22" fill="#1a0a00" />
-    <circle cx="20" cy="16" r="3" fill="#1a0a00" />
-    <circle cx="24" cy="13" r="3.5" fill="#1a0a00" />
-    <circle cx="28" cy="12" r="3.5" fill="#1a0a00" />
-    <circle cx="32" cy="13" r="3.5" fill="#1a0a00" />
-    <circle cx="36" cy="16" r="3" fill="#1a0a00" />
-    <ellipse cx="23" cy="23" rx="2" ry="2.2" fill="white" />
-    <ellipse cx="33" cy="23" rx="2" ry="2.2" fill="white" />
-    <circle cx="23.5" cy="23.5" r="1.4" fill="#0a0500" />
-    <circle cx="33.5" cy="23.5" r="1.4" fill="#0a0500" />
-    <path d="M23 29 Q28 33 33 29" stroke="#7a4a2a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#8E44AD" />
+    
+    <rect x="18" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/><rect x="30" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/>
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#c07848" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#8E44AD" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#8E44AD" />
+    <circle cx="14" cy="47" r="4" fill="#c07848" />
+    <circle cx="42" cy="47" r="4" fill="#c07848" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#c07848" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#0a0808" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#0a0808" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#0a0808" />
+    <ellipse cx="28" cy="36" rx="7" ry="5" fill="#0a0808" opacity="0.85"/>
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#8E44AD" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#8E44AD" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#0a0808" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#0a0808" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 08 — Eliška (světlé vlasy, copy) ────────────────
+// Avatar 08 - Eliska
 export const Avatar08 = ({ size }) => (
-  <AvatarBase size={size} bg="#0d1a2e">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#1a4d7a" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#0d2d4a" />
-    <rect x="23" y="35" width="10" height="12" fill="#ebf5fb" rx="2" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#fce5d0" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#fce5d0" />
-    {/* Světlé copy */}
-    <path d="M17 20 Q17 10 28 10 Q39 10 39 20" fill="#f5d76e" />
-    <path d="M17 20 Q15 30 16 42 L18 42 Q17 30 17 20Z" fill="#f5d76e" />
-    <path d="M39 20 Q41 30 40 42 L38 42 Q39 30 39 20Z" fill="#f5d76e" />
-    <ellipse cx="28" cy="13" rx="11" ry="4" fill="#f5d76e" />
-    <ellipse cx="23" cy="22" rx="1.8" ry="2" fill="white" />
-    <ellipse cx="33" cy="22" rx="1.8" ry="2" fill="white" />
-    <circle cx="23.5" cy="22.5" r="1.2" fill="#2c1a00" />
-    <circle cx="33.5" cy="22.5" r="1.2" fill="#2c1a00" />
-    {/* Malé ústa */}
-    <path d="M25 29 Q28 31 31 29" stroke="#c9826a" strokeWidth="1" fill="none" strokeLinecap="round" />
-    {/* Mašle */}
-    <path d="M25 11 Q28 9 31 11 Q28 13 25 11Z" fill="#e74c3c" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#2471A3" />
+    
+    <path d="M16 56 Q18 44 22 42 L28 44 L34 42 Q38 44 40 56Z" fill="#2471A3" />
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#fae0c0" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#2471A3" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#2471A3" />
+    <circle cx="14" cy="47" r="4" fill="#fae0c0" />
+    <circle cx="42" cy="47" r="4" fill="#fae0c0" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#fae0c0" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#303030" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#303030" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#303030" />
+    <circle cx="14" cy="22" r="5" fill="#303030" opacity="0.9"/><circle cx="42" cy="22" r="5" fill="#303030" opacity="0.9"/>
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#2471A3" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#2471A3" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#303030" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#303030" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 09 — Jakub (zrzavé vlasy, mladý) ────────────────
+// Avatar 09 - Jakub
 export const Avatar09 = ({ size }) => (
-  <AvatarBase size={size} bg="#1a0d00">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#873600" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#6e2c00" />
-    <rect x="23" y="35" width="10" height="12" fill="white" rx="1" />
-    <polygon points="28,36 26,43 28,42 30,43" fill="#e67e22" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#f0c090" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#f0c090" />
-    {/* Zrzavé rozcuchané vlasy */}
-    <path d="M17 22 Q18 10 28 10 Q38 10 39 22" fill="#c0392b" />
-    <path d="M17 18 Q15 12 18 10 Q16 14 17 18Z" fill="#c0392b" />
-    <path d="M39 18 Q41 12 38 10 Q40 14 39 18Z" fill="#c0392b" />
-    <path d="M22 11 Q20 8 22 7 Q21 9 22 11Z" fill="#c0392b" />
-    <path d="M28 10 Q28 7 30 7 Q29 9 28 10Z" fill="#c0392b" />
-    <path d="M34 11 Q36 8 34 7 Q35 9 34 11Z" fill="#c0392b" />
-    <ellipse cx="23" cy="23" rx="2" ry="2.2" fill="white" />
-    <ellipse cx="33" cy="23" rx="2" ry="2.2" fill="white" />
-    <circle cx="23.5" cy="23.5" r="1.3" fill="#1a0800" />
-    <circle cx="33.5" cy="23.5" r="1.3" fill="#1a0800" />
-    <path d="M23 29 Q28 33 33 29" stroke="#c0856a" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-    {/* Pihy */}
-    <circle cx="24" cy="27" r="0.8" fill="#c9826a" />
-    <circle cx="32" cy="27" r="0.8" fill="#c9826a" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#C0392B" />
+    <polygon points="28,34 26,44 28,42 30,44" fill="#c0392b" />
+    <rect x="18" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/><rect x="30" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/>
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#b86830" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#C0392B" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#C0392B" />
+    <circle cx="14" cy="47" r="4" fill="#b86830" />
+    <circle cx="42" cy="47" r="4" fill="#b86830" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#b86830" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#180808" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#180808" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#180808" />
+    
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#C0392B" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#C0392B" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#180808" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#180808" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 10 — Kateřina (tmavé vlasy, asijský typ) ────────
+// Avatar 10 - Katerina
 export const Avatar10 = ({ size }) => (
-  <AvatarBase size={size} bg="#1a0a1a">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#6c1a6c" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#4a0d4a" />
-    <rect x="23" y="35" width="10" height="12" fill="#f9ebea" rx="2" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#f0c8a0" />
-    <ellipse cx="28" cy="23" rx="10" ry="12" fill="#f0c8a0" />
-    {/* Rovné tmavé vlasy */}
-    <path d="M18 22 Q18 9 28 9 Q38 9 38 22" fill="#0d0508" />
-    <path d="M18 22 Q17 30 17 38 L19 38 Q19 30 18 22Z" fill="#0d0508" />
-    <path d="M38 22 Q39 30 39 38 L37 38 Q37 30 38 22Z" fill="#0d0508" />
-    <rect x="17" y="10" width="22" height="5" rx="0" fill="#0d0508" />
-    {/* Mandlové oči */}
-    <path d="M20 23 Q23 21 26 23 Q23 25 20 23Z" fill="white" />
-    <path d="M30 23 Q33 21 36 23 Q33 25 30 23Z" fill="white" />
-    <circle cx="23" cy="23" r="1.2" fill="#0d0508" />
-    <circle cx="33" cy="23" r="1.2" fill="#0d0508" />
-    <path d="M23 29 Q28 32 33 29" stroke="#c9826a" strokeWidth="1" fill="none" strokeLinecap="round" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#76448A" />
+    
+    <path d="M16 56 Q18 44 22 42 L28 44 L34 42 Q38 44 40 56Z" fill="#76448A" />
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#f0c090" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#76448A" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#76448A" />
+    <circle cx="14" cy="47" r="4" fill="#f0c090" />
+    <circle cx="42" cy="47" r="4" fill="#f0c090" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#f0c090" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#4a1828" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#4a1828" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#4a1828" />
+    <path d="M20 12 Q22 8 24 12 Q22 14 20 12Z" fill="#76448A" /><path d="M32 12 Q34 8 36 12 Q34 14 32 12Z" fill="#76448A" />
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#76448A" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#76448A" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#4a1828" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#4a1828" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 11 — Ondřej (sportovní typ, krátké vlasy) ───────
+// Avatar 11 - Ondrej
 export const Avatar11 = ({ size }) => (
-  <AvatarBase size={size} bg="#0a1a0a">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#1a5c1a" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#0d400d" />
-    <rect x="23" y="35" width="10" height="12" fill="white" rx="1" />
-    <polygon points="28,36 26,43 28,42 30,43" fill="#27ae60" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#e8b89a" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#e8b89a" />
-    {/* Krátké hnědé vlasy */}
-    <path d="M17 21 Q18 11 28 11 Q38 11 39 21 Q36 13 28 14 Q20 13 17 21Z" fill="#4a2810" />
-    <ellipse cx="28" cy="13" rx="10" ry="3" fill="#4a2810" />
-    <ellipse cx="23" cy="23" rx="2" ry="2.2" fill="white" />
-    <ellipse cx="33" cy="23" rx="2" ry="2.2" fill="white" />
-    <circle cx="23.5" cy="23.5" r="1.4" fill="#1a0800" />
-    <circle cx="33.5" cy="23.5" r="1.4" fill="#1a0800" />
-    {/* Výraznější obočí */}
-    <path d="M20 20 Q23 19 26 20" stroke="#3a1a08" strokeWidth="1.4" fill="none" />
-    <path d="M30 20 Q33 19 36 20" stroke="#3a1a08" strokeWidth="1.4" fill="none" />
-    <path d="M23 29 Q28 33 33 29" stroke="#c0856a" strokeWidth="1.3" fill="none" strokeLinecap="round" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#1E8449" />
+    <path d="M22 34 Q28 37 34 34" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="18" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/><rect x="30" y="42" width="8" height="14" rx="2" fill="#2a2a3a"/>
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#d89060" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#1E8449" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#1E8449" />
+    <circle cx="14" cy="47" r="4" fill="#d89060" />
+    <circle cx="42" cy="47" r="4" fill="#d89060" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#d89060" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#203820" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#203820" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#203820" />
+    
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#1E8449" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#1E8449" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#203820" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#203820" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
 
-// ─── Avatar 12 — Sofie (africké vlasy, výrazná) ─────────────
+// Avatar 12 - Sofie
 export const Avatar12 = ({ size }) => (
-  <AvatarBase size={size} bg="#0d0d1a">
-    <ellipse cx="28" cy="46" rx="16" ry="10" fill="#1a3a6c" />
-    <path d="M12 56 Q14 38 22 36 L28 38 L34 36 Q42 38 44 56Z" fill="#0d2040" />
-    <rect x="23" y="35" width="10" height="12" fill="#eaf2ff" rx="2" />
-    <ellipse cx="28" cy="34" rx="5" ry="3" fill="#7a4520" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#7a4520" />
-    {/* Afro vlasy */}
-    <circle cx="28" cy="16" r="14" fill="#0d0508" />
-    <circle cx="28" cy="23" rx="11" ry="10" fill="#7a4520" />
-    <ellipse cx="28" cy="23" rx="11" ry="12" fill="#7a4520" />
-    <circle cx="15" cy="20" r="5" fill="#0d0508" />
-    <circle cx="41" cy="20" r="5" fill="#0d0508" />
-    <circle cx="20" cy="13" r="5" fill="#0d0508" />
-    <circle cx="36" cy="13" r="5" fill="#0d0508" />
-    <circle cx="28" cy="10" r="6" fill="#0d0508" />
-    <ellipse cx="23" cy="23" rx="2" ry="2.2" fill="white" />
-    <ellipse cx="33" cy="23" rx="2" ry="2.2" fill="white" />
-    <circle cx="23.5" cy="23.5" r="1.4" fill="#050208" />
-    <circle cx="33.5" cy="23.5" r="1.4" fill="#050208" />
-    <path d="M23 29 Q28 33 33 29" stroke="#8a5a3a" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-    {/* Náušnice */}
-    <circle cx="17" cy="27" r="2" fill="#f39c12" />
-    <circle cx="39" cy="27" r="2" fill="#f39c12" />
-  </AvatarBase>
+  <svg width={size} height={size} viewBox="0 0 56 56"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ borderRadius:"50%", flexShrink:0, display:"block" }}
+  >
+    <circle cx="28" cy="28" r="28" fill="#0d0d18" />
+    <path d="M14 56 Q16 38 22 36 L28 38 L34 36 Q40 38 42 56Z" fill="#1A5276" />
+    
+    <path d="M16 56 Q18 44 22 42 L28 44 L34 42 Q38 44 40 56Z" fill="#1A5276" />
+    <ellipse cx="22" cy="55" rx="6" ry="3" fill="#1a1010"/><ellipse cx="34" cy="55" rx="6" ry="3" fill="#1a1010"/>
+    <ellipse cx="28" cy="33" rx="5" ry="3.5" fill="#fce8d0" />
+    <ellipse cx="14" cy="40" rx="4" ry="7" fill="#1A5276" />
+    <ellipse cx="42" cy="40" rx="4" ry="7" fill="#1A5276" />
+    <circle cx="14" cy="47" r="4" fill="#fce8d0" />
+    <circle cx="42" cy="47" r="4" fill="#fce8d0" />
+    <ellipse cx="28" cy="22" rx="13" ry="14" fill="#fce8d0" />
+    <path d="M15 20 Q16 8 28 7 Q40 8 41 20 Q38 11 28 11 Q18 11 15 20Z" fill="#101828" />
+    <path d="M15 20 Q14 24 15 27 Q14 22 16 19Z" fill="#101828" />
+    <path d="M41 20 Q42 24 41 27 Q42 22 40 19Z" fill="#101828" />
+    <rect x="24" y="32" width="6" height="18" rx="3" fill="#101828" />
+    <ellipse cx="22.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <ellipse cx="33.5" cy="22" rx="3.5" ry="4" fill="white" />
+    <circle cx="23" cy="22.5" r="2.2" fill="#1A5276" />
+    <circle cx="34" cy="22.5" r="2.2" fill="#1A5276" />
+    <circle cx="23.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="34.2" cy="22.7" r="1.3" fill="#0a0408" />
+    <circle cx="23.8" cy="21.8" r="0.6" fill="white" />
+    <circle cx="34.8" cy="21.8" r="0.6" fill="white" />
+    <path d="M19.5 18.5 Q22.5 17 25 18.5" stroke="#101828" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M31 18.5 Q33.5 17 36.5 18.5" stroke="#101828" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M23 28 Q28 32 33 28" stroke="#c08060" stroke-width="1.4" fill="none" stroke-linecap="round" />
+    <circle cx="18" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+    <circle cx="38" cy="26" r="2" fill="#ff9999" opacity="0.35" />
+  </svg>
 );
-
-// ── Export všech avatarů ─────────────────────────────────────
 
 export const AVATAR_COMPONENTS = [
   Avatar01, Avatar02, Avatar03, Avatar04,
@@ -322,18 +451,18 @@ export const AVATAR_COMPONENTS = [
 ];
 
 export const AVATAR_CONFIGS = [
-  { id: "AVATAR01", name: "Marek",    Component: Avatar01, color: "#1D9E75" },
-  { id: "AVATAR02", name: "Jana",     Component: Avatar02, color: "#9B59B6" },
-  { id: "AVATAR03", name: "Tomáš",    Component: Avatar03, color: "#27AE60" },
-  { id: "AVATAR04", name: "Lucie",    Component: Avatar04, color: "#E74C3C" },
-  { id: "AVATAR05", name: "Pavel",    Component: Avatar05, color: "#2980B9" },
-  { id: "AVATAR06", name: "Marie",    Component: Avatar06, color: "#E67E22" },
-  { id: "AVATAR07", name: "David",    Component: Avatar07, color: "#8E44AD" },
-  { id: "AVATAR08", name: "Eliška",   Component: Avatar08, color: "#2471A3" },
-  { id: "AVATAR09", name: "Jakub",    Component: Avatar09, color: "#C0392B" },
-  { id: "AVATAR10", name: "Kateřina", Component: Avatar10, color: "#76448A" },
-  { id: "AVATAR11", name: "Ondřej",   Component: Avatar11, color: "#1E8449" },
-  { id: "AVATAR12", name: "Sofie",    Component: Avatar12, color: "#1A5276" },
+  { id: "AVATAR01", name: "Marek", Component: Avatar01, color: "#1D9E75" },
+  { id: "AVATAR02", name: "Jana", Component: Avatar02, color: "#9B59B6" },
+  { id: "AVATAR03", name: "Tomas", Component: Avatar03, color: "#27AE60" },
+  { id: "AVATAR04", name: "Lucie", Component: Avatar04, color: "#E74C3C" },
+  { id: "AVATAR05", name: "Pavel", Component: Avatar05, color: "#2980B9" },
+  { id: "AVATAR06", name: "Marie", Component: Avatar06, color: "#E67E22" },
+  { id: "AVATAR07", name: "David", Component: Avatar07, color: "#8E44AD" },
+  { id: "AVATAR08", name: "Eliska", Component: Avatar08, color: "#2471A3" },
+  { id: "AVATAR09", name: "Jakub", Component: Avatar09, color: "#C0392B" },
+  { id: "AVATAR10", name: "Katerina", Component: Avatar10, color: "#76448A" },
+  { id: "AVATAR11", name: "Ondrej", Component: Avatar11, color: "#1E8449" },
+  { id: "AVATAR12", name: "Sofie", Component: Avatar12, color: "#1A5276" },
 ];
 
 export const getAvatarComponent = (avatarId) => {
