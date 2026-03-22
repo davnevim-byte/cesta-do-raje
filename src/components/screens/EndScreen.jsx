@@ -148,78 +148,156 @@ const Heart3D = () => (
   </div>
 );
 
-// ── Karta hráče ───────────────────────────────────────────────
+// ── Rank badge ────────────────────────────────────────────────
+const RankBadge = ({ rank, size = 36 }) => {
+  const medals = { 1: { bg: "#d4ac0d", text: "#fff", label: "1." },
+                   2: { bg: "#9a9a9a", text: "#fff", label: "2." },
+                   3: { bg: "#c87941", text: "#fff", label: "3." } };
+  const m = medals[rank];
+  if (!m) return (
+    <div style={{ width: size, height: size, borderRadius: "50%",
+      background: "rgba(255,255,255,0.06)", display: "flex",
+      alignItems: "center", justifyContent: "center",
+      fontSize: size * 0.35, color: "#555", fontWeight: 700 }}>
+      {rank}
+    </div>
+  );
+  return (
+    <motion.div
+      animate={{ scale: [1, 1.12, 1] }}
+      transition={{ duration: 2, repeat: Infinity, delay: rank * 0.3 }}
+      style={{ width: size, height: size, borderRadius: "50%",
+        background: m.bg, display: "flex", alignItems: "center",
+        justifyContent: "center", fontSize: size * 0.38, color: m.text,
+        fontWeight: 800, boxShadow: `0 0 14px ${m.bg}88`, flexShrink: 0 }}>
+      {m.label}
+    </motion.div>
+  );
+};
 
+// ── Karta hráče ───────────────────────────────────────────────
 const PlayerCard = ({ player, rank, delay }) => {
   const [shown, setShown] = useState(false);
   const color   = getAvatarColor(player.avatarId);
   const AvatarC = getAvatarComponent(player.avatarId);
   const isWin   = player.circle === "inner";
+  const isFirst = rank === 1;
   const td      = player.titleData;
+  const total   = td?.totalScore ?? 0;
 
   useEffect(() => {
-    const t = setTimeout(() => setShown(true), delay * 1000 + 800);
+    const t = setTimeout(() => setShown(true), delay * 1000 + 600);
     return () => clearTimeout(t);
   }, []);
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -24, scale: 0.95 }}
+      initial={{ opacity: 0, x: -30, scale: 0.92 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
-      transition={{ delay, duration: 0.45, ease: "backOut" }}
+      transition={{ delay, duration: 0.5, ease: "backOut" }}
       style={{
-        background:   isWin ? `${color}14` : "rgba(255,255,255,0.03)",
-        border:       `${isWin ? 2 : 1}px solid ${isWin ? color : "rgba(255,255,255,0.07)"}`,
-        borderRadius: 14,
-        padding:      "13px 15px",
-        display:      "flex", alignItems: "center", gap: 12,
-        position:     "relative", overflow: "hidden",
+        background: isFirst
+          ? `linear-gradient(135deg, ${color}22, ${color}08)`
+          : isWin ? `${color}10` : "rgba(255,255,255,0.03)",
+        border: `${isFirst ? 2 : isWin ? 1.5 : 1}px solid ${
+          isFirst ? color : isWin ? color + "88" : "rgba(255,255,255,0.07)"}`,
+        borderRadius: 16,
+        padding: isFirst ? "16px 16px" : "12px 14px",
+        display: "flex", alignItems: "center", gap: 12,
+        position: "relative", overflow: "hidden",
+        boxShadow: isFirst ? `0 0 28px ${color}33` : "none",
       }}
     >
-      {/* Rank */}
-      <div style={{ position:"absolute", top:8, right:10, fontSize:12 }}>
-        {rank===1?"🥇":rank===2?"🥈":rank===3?"🥉":`#${rank}`}
-      </div>
+      {/* Zlatý shimmer pro 1. místo */}
+      {isFirst && (
+        <motion.div
+          animate={{ x: ["-100%", "200%"] }}
+          transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3 }}
+          style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
+      {/* Rank badge */}
+      <RankBadge rank={rank} size={isFirst ? 42 : 34} />
 
       {/* Avatar */}
-      <div style={{ border:`2px solid ${isWin ? color : "transparent"}`, borderRadius:"50%", flexShrink:0 }}>
-        <AvatarC size={46} />
-      </div>
+      <motion.div
+        animate={isFirst ? { scale: [1, 1.05, 1] } : {}}
+        transition={{ duration: 2, repeat: Infinity }}
+        style={{
+          border: `${isFirst ? 3 : 2}px solid ${isWin ? color : color + "55"}`,
+          borderRadius: "50%", flexShrink: 0,
+          boxShadow: isWin ? `0 0 14px ${color}66` : "none",
+        }}
+      >
+        <AvatarC size={isFirst ? 52 : 44} />
+      </motion.div>
 
       {/* Info */}
-      <div style={{ flex:1, minWidth:0 }}>
-        <div style={{ fontSize:15, fontWeight:700, color: isWin ? color : "#e8e8e8", marginBottom:2 }}>
-          {player.name}{isWin && " 🌿"}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontSize: isFirst ? 17 : 14, fontWeight: 700,
+          color: isWin ? color : "#e8e8e8", marginBottom: 3,
+          display: "flex", alignItems: "center", gap: 6,
+        }}>
+          {player.name}
+          {isWin && <span style={{ fontSize: 14 }}>🌿</span>}
         </div>
-        <div style={{ fontSize:11, color:"#555", marginBottom:5 }}>
-          {player.circle==="inner" ? "⛪ Dosáhl/a sboru" : `🌍 Políčko ${player.position+1}`}
+
+        <div style={{ fontSize: 11, color: "#555", marginBottom: 5 }}>
+          {player.circle === "inner"
+            ? "Dosahl/a sboru"
+            : `Policko ${player.position + 1}`}
         </div>
 
         {/* Titul */}
         <AnimatePresence>
           {shown && td && (
-            <motion.span
-              initial={{ opacity:0, y:4 }} animate={{ opacity:1, y:0 }}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
               style={{
-                display:"inline-block", fontSize:10,
-                padding:"2px 8px",
-                background:`${color}20`, border:`1px solid ${color}44`,
-                borderRadius:10, color, fontWeight:600,
+                display: "inline-block", fontSize: 10,
+                padding: "2px 10px",
+                background: `${color}20`,
+                border: `1px solid ${color}44`,
+                borderRadius: 10, color, fontWeight: 600,
+                marginBottom: 5,
               }}
             >
               {td.prefix} · {td.title}
-            </motion.span>
+            </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Top ovoce */}
-        {td?.topFruits?.length > 0 && (
-          <div style={{ display:"flex", gap:4, marginTop:6, flexWrap:"wrap" }}>
-            {td.topFruits.slice(0,3).map((f) => (
-              <FruitBadge key={f.key} fruitKey={f.key} size={24} />
-            ))}
-          </div>
-        )}
+        {/* Ovoce + skore */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          {td?.topFruits?.filter(f => f.score > 0).slice(0, 3).map((f) => (
+            <div key={f.key} style={{
+              display: "flex", alignItems: "center", gap: 3,
+              fontSize: 10, color: "#666",
+            }}>
+              <span style={{ fontSize: 13 }}>{f.emoji}</span>
+              <span>{f.score}x</span>
+            </div>
+          ))}
+          {total > 0 && (
+            <div style={{
+              marginLeft: "auto",
+              fontSize: 11, fontWeight: 700,
+              color: color + "cc",
+              padding: "1px 8px",
+              background: `${color}12`,
+              borderRadius: 8,
+            }}>
+              {total} b.
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );
@@ -233,14 +311,16 @@ export const EndScreen = () => {
   const goToLogin   = useGameStore((s) => s.goToLogin);
   const { sounds }  = useSound();
   const [phase, setPhase] = useState(0);
+  const [showWinner, setShowWinner] = useState(false);
   const [showCerts, setShowCerts] = useState(false);
 
   useEffect(() => {
     if (!endResults) return;
     sounds.victory();
-    const t1 = setTimeout(() => setPhase(1), 1200);
-    const t2 = setTimeout(() => setPhase(2), 3500);
-    return () => [t1,t2].forEach(clearTimeout);
+    const t0 = setTimeout(() => setShowWinner(true), 800);
+    const t1 = setTimeout(() => setPhase(1), 2000);
+    const t2 = setTimeout(() => setPhase(2), 4000);
+    return () => [t0,t1,t2].forEach(clearTimeout);
   }, []);
 
   if (!endResults) return null;
@@ -301,6 +381,83 @@ export const EndScreen = () => {
             {winners.length > 0 ? "Věrnost a vytrvalost přinesly ovoce." : "Každá cesta s Jehovou má svou hodnotu."}
           </motion.p>
         </motion.div>
+
+        {/* Velký winner reveal */}
+        <AnimatePresence>
+          {showWinner && winners.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease: "backOut" }}
+              style={{
+                textAlign: "center", marginBottom: 20,
+                padding: "20px 16px",
+                background: `linear-gradient(135deg, ${getAvatarColor(winners[0]?.avatarId)}18, transparent)`,
+                border: `1.5px solid ${getAvatarColor(winners[0]?.avatarId)}44`,
+                borderRadius: 18,
+                boxShadow: `0 0 40px ${getAvatarColor(winners[0]?.avatarId)}22`,
+              }}
+            >
+              {winners.length === 1 ? (
+                <>
+                  {/* Avatar viteze velky */}
+                  <motion.div
+                    animate={{ scale: [1, 1.06, 1], rotate: [0, 2, -2, 0] }}
+                    transition={{ duration: 2.5, repeat: Infinity }}
+                    style={{ display: "inline-block", marginBottom: 10 }}
+                  >
+                    {(() => {
+                      const WinAvatar = getAvatarComponent(winners[0].avatarId);
+                      const wColor = getAvatarColor(winners[0].avatarId);
+                      return (
+                        <div style={{
+                          border: `4px solid ${wColor}`,
+                          borderRadius: "50%",
+                          boxShadow: `0 0 30px ${wColor}88`,
+                          display: "inline-block",
+                        }}>
+                          <WinAvatar size={80} />
+                        </div>
+                      );
+                    })()}
+                  </motion.div>
+                  <motion.div
+                    animate={{ scale: [1, 1.03, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    style={{
+                      fontSize: 24, fontWeight: 800,
+                      color: getAvatarColor(winners[0].avatarId),
+                      fontFamily: "Georgia, serif",
+                      textShadow: `0 0 20px ${getAvatarColor(winners[0].avatarId)}66`,
+                      marginBottom: 4,
+                    }}
+                  >
+                    {winners[0].name}
+                  </motion.div>
+                  <div style={{ fontSize: 13, color: "#9FE1CB", marginBottom: 6 }}>
+                    Dosahl/a Raje!
+                  </div>
+                  {winners[0].titleData && (
+                    <div style={{
+                      fontSize: 11, color: getAvatarColor(winners[0].avatarId),
+                      padding: "3px 14px",
+                      background: `${getAvatarColor(winners[0].avatarId)}15`,
+                      border: `1px solid ${getAvatarColor(winners[0].avatarId)}33`,
+                      borderRadius: 20, display: "inline-block",
+                    }}>
+                      {winners[0].titleData.prefix} · {winners[0].titleData.title}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#9FE1CB" }}>
+                  {winners.map(w => w.name).join(" & ")} dosahli Raje!
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Hráčské karty */}
         <AnimatePresence>
