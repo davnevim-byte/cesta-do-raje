@@ -22,14 +22,19 @@ export const SetupScreen = () => {
   const [step,        setStep]        = useState(0); // 0 = zařízení, 1 = hráči, 2 = nastavení
   const [deviceType,  setDeviceType]  = useState(null);
   const [quickMode,   setQuickMode]   = useState(false);
+  const [loading,     setLoading]     = useState(false);
 
   const setDeviceTypeStore = useGameStore((s) => s.setDeviceType);
   const setQuickModeStore  = useGameStore((s) => s.setQuickMode);
 
   const handleStart = () => {
+    setLoading(true);
     const validNames = names.slice(0, playerCount);
     setDeviceTypeStore(deviceType ?? "mobile");
-    startGame(playerCount, validNames, avatars.slice(0, playerCount), difficulty, quickMode ? 20 : timer, quickMode);
+    // Kratka pauza aby loading screen byl videt
+    setTimeout(() => {
+      startGame(playerCount, validNames, avatars.slice(0, playerCount), difficulty, quickMode ? 20 : timer, quickMode);
+    }, 800);
   };
 
   const difficultyOptions = [
