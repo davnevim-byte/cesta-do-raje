@@ -124,14 +124,6 @@ export const DOORS_SCENARIOS = [
     timeSeconds: 180,
     successCriteria: "Skupina hlasuje — zachoval/a {currentPlayer} klid a laskavost? Vysvětlil/a bez nadřazenosti? Udržel/a rodinnou atmosféru?",
   },
-
-];
-
-// ─────────────────────────────────────────────
-//  SLUŽBA — těžší scénáře (vnitřní kruh)
-//  Kategorie: těžší dveře, biblické studium, speciální situace, vozíčková
-// ─────────────────────────────────────────────
-
   {
     id: "DVERE_SMUTECNI",
     difficulty: "hard",
@@ -282,6 +274,7 @@ export const DOORS_SCENARIOS = [
     hint: "Nekonfrontovat. Rici: 'Oceňuji vedu. Mne osobne zaujalo jak komplexni je DNA — prectete si tuto brozuru.' Nechat rozhodnutí na nem.",
     successCriteria: "Skupina hlasuje: reagovano respektne, bez dohady a s konkretni publikaci?",
   },
+];
 
 export const SERVICE_SCENARIOS = [
 
