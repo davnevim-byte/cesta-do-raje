@@ -149,6 +149,12 @@ const initialState = {
 
   // Zvuk — zachovává se přes restarty
   isMuted: false,
+
+  // Winner picker — výběr vítěze skupinové výzvy
+  showWinnerPicker: false,
+  winnerPickerReward: null,   // { spaces?: number, fruit?: string } nebo raw WildCard reward
+  winnerPickerEndTurn: false, // true = po výběru zavolat _nextPlayer
+  winnerPickerLabel: "",      // popis odměny pro UI
 };
 
 // ─────────────────────────────────────────────
@@ -710,12 +716,15 @@ export const useGameStore = create(
       answerActivity: (success) => {
         set({ showActivity: false });
         if (success) {
-          const { players, currentPlayerIndex } = get();
-          const updated = [...players];
-          updated[currentPlayerIndex] = { ...updated[currentPlayerIndex], score: (updated[currentPlayerIndex].score ?? 0) + 10 };
-          set({ players: updated });
+          // Skupinová aktivita — vítěze vybere skupina
+          get().openWinnerPicker(
+            { moveForward: 2 },
+            true,
+            "Vítěz postoupí o 2 políčka vpřed"
+          );
+        } else {
+          get().endTurn();
         }
-        get().endTurn();
       },
 
       startWitnessingTimer: () => {
@@ -924,6 +933,85 @@ export const useGameStore = create(
         }
 
         set({ players: updated, showWildCard: false, currentWildCard: null });
+
+        // Skupinové výzvy s vítězem — otevři winner picker
+        const needsPicker =
+          action?.type === "groupChallenge" ||
+          action?.winnerReward;
+
+        if (needsPicker) {
+          const rawReward =
+            action?.type === "groupChallenge"
+              ? action.reward
+              : action.winnerReward;
+
+          if (rawReward) {
+            const spaces = rawReward.spaces ?? 0;
+            const label = spaces > 0
+              ? `Vítěz postoupí o ${spaces} políčk${spaces === 1 ? "o" : spaces < 5 ? "a" : ""} vpřed`
+              : "Odměna pro vítěze";
+            // endTurnAfter: false — WildCard timing, _nextPlayer běžel automaticky
+            get().openWinnerPicker(rawReward, false, label);
+          }
+        }
+      },
+
+      // ─────────────────────────────
+      //  WINNER PICKER — skupinové výzvy
+      // ─────────────────────────────
+
+      openWinnerPicker: (reward, endTurnAfter = false, label = "") => {
+        set({
+          showWinnerPicker:   true,
+          winnerPickerReward: reward,
+          winnerPickerEndTurn: endTurnAfter,
+          winnerPickerLabel:  label,
+        });
+      },
+
+      selectWinner: (playerIndex) => {
+        const { players, winnerPickerReward, winnerPickerEndTurn } = get();
+        const updated = [...players];
+        const p = updated[playerIndex];
+
+        if (winnerPickerReward) {
+          // Podpora obou formátů: { spaces } (WildCard) i { moveForward } (Activity)
+          const spaces = winnerPickerReward.moveForward ?? winnerPickerReward.spaces ?? 0;
+          if (spaces > 0) {
+            const tiles = p.circle === "outer" ? OUTER_TILES : INNER_TILES;
+            updated[playerIndex] = {
+              ...p,
+              position: (p.position + spaces) % tiles.length,
+            };
+          }
+          const fruit = winnerPickerReward.fruit;
+          if (fruit) {
+            updated[playerIndex] = {
+              ...updated[playerIndex],
+              fruitScore: addFruit(updated[playerIndex].fruitScore, fruit, 1),
+            };
+          }
+        }
+
+        set({
+          players:             updated,
+          showWinnerPicker:    false,
+          winnerPickerReward:  null,
+          winnerPickerEndTurn: false,
+          winnerPickerLabel:   "",
+        });
+        if (winnerPickerEndTurn) get()._nextPlayer();
+      },
+
+      skipWinnerPicker: () => {
+        const { winnerPickerEndTurn } = get();
+        set({
+          showWinnerPicker:    false,
+          winnerPickerReward:  null,
+          winnerPickerEndTurn: false,
+          winnerPickerLabel:   "",
+        });
+        if (winnerPickerEndTurn) get()._nextPlayer();
       },
 
       // ─────────────────────────────
@@ -995,6 +1083,8 @@ export const useGameStore = create(
           showActivity:    false,
           showGraceCard:   false,
           graceCards:      0,
+          showWinnerPicker: false,
+          winnerPickerReward: null,
         });
       },
 
@@ -1042,8 +1132,8 @@ export const useGameStore = create(
       },
 
       isModalOpen: () => {
-        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity, showGraceCard, showBonusRound } = get();
-        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity || showGraceCard || showBonusRound;
+        const { showQuestion, showWitnessing, showTileAction, showWildCard, showOnboarding, showService, showCongregation, showActivity, showGraceCard, showBonusRound, showWinnerPicker } = get();
+        return showQuestion || showWitnessing || showTileAction || showWildCard || showOnboarding || showService || showCongregation || showActivity || showGraceCard || showBonusRound || showWinnerPicker;
       },
     }),
 
