@@ -23,6 +23,7 @@ import ServiceModal from "../modals/ServiceModal";
 import CongregationModal from "../modals/CongregationModal";
 import ActivityModal from "../modals/ActivityModal";
 import GraceCardModal from "../modals/GraceCardModal";
+import WinnerPickerModal from "../modals/WinnerPickerModal";
 import { useSound } from "../../hooks/useSound";
 
 export const GameScreen = () => {
@@ -105,6 +106,7 @@ export const GameScreen = () => {
       <CongregationModal />
       <ActivityModal />
       <GraceCardModal />
+      <WinnerPickerModal />
       <DisplaySizeControl />
       {showLog && <TurnLogModal onClose={() => setShowLog(false)} />}
       <BonusRoundModal />
